@@ -1,4 +1,6 @@
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
 
 namespace Phoder1.Core
@@ -13,7 +15,10 @@ namespace Phoder1.Core
             SetFrameRate();
         }
 
+#if ODIN_INSPECTOR
         [Button]
+#endif
+        [ContextMenu("Set framerate")]
         private void SetFrameRate()
         {
             Application.targetFrameRate = _targetFrameRate;

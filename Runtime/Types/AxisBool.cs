@@ -1,10 +1,17 @@
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
+
 using System;
 using UnityEngine;
 
 namespace Phoder1.Core.Types
 {
-    [Serializable, InlineProperty]
+    //Todo: probably possible to create this attribute with a classic editor drawer
+#if ODIN_INSPECTOR
+    [InlineProperty]
+#endif
+    [Serializable]
     public struct AxisBool
     {
         public AxisBool(bool x = default, bool y = default, bool z = default)
@@ -14,11 +21,17 @@ namespace Phoder1.Core.Types
             this.z = z;
         }
 
+#if ODIN_INSPECTOR
         [HorizontalGroup, LabelWidth(15)]
+#endif
         public bool x;
+#if ODIN_INSPECTOR
         [HorizontalGroup, LabelWidth(15)]
+#endif
         public bool y;
+#if ODIN_INSPECTOR
         [HorizontalGroup, LabelWidth(15)]
+#endif
         public bool z;
 
         public void Freeze(ref Vector3 vector)

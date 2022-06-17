@@ -1,67 +1,106 @@
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using System;
 using System.Collections;
+using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UniRx;
 
 namespace Phoder1.Core
 {
+    //Todo: Make a classic editor script! class is too dependent on Odin inspector!
     public enum SceneLoadMode { NextInBuild = 0, ByName = 1, ByIndex = 2 }
     public enum SceneUnloadMode { LoadFinished = 0, Delay = 1, IReadyable = 2, Manually = 3 }
     public class SceneLoader : MonoBehaviour
     {
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
-        [SerializeField, EnumToggleButtons]
+        [EnumToggleButtons]
+#endif
+        [SerializeField]
         private LoadSceneMode _loadSceneMode;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
-        [SerializeField, EnumToggleButtons]
+        [EnumToggleButtons]
+#endif
+        [SerializeField]
         private SceneLoadMode _loadMode;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
+#endif
         [Tooltip("Whether the sceneloader should be able to load multiple scenes at the same time.")]
         [SerializeField]
         private bool _lockAtLoad = true;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
+#endif
         [SerializeField]
         private bool _dontDestroyOnLoad = false;
+
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
+#endif
         [SerializeField]
         private int _loadDelay;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
-        [SerializeField, ShowIf("@_loadMode == SceneLoadMode.ByName"), ValueDropdown("ScenesNames"), InspectorName("Scene"), ValidateInput("@_sceneName != string.Empty")]
+        [ShowIf("@_loadMode == SceneLoadMode.ByName"), ValueDropdown("ScenesNames"), InspectorName("Scene"), ValidateInput("@_sceneName != string.Empty")]
+#endif
+        [SerializeField]
         private string _sceneName;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Load")]
-        [SerializeField, ShowIf("@_loadMode == SceneLoadMode.ByIndex"), ValueDropdown("ScenesIndexes"), InspectorName("Scene"), ValidateInput("@_sceneIndex >= 0")]
+        [ShowIf("@_loadMode == SceneLoadMode.ByIndex"), ValueDropdown("ScenesIndexes"), InspectorName("Scene"), ValidateInput("@_sceneIndex >= 0")]
+#endif
+        [SerializeField]
         private int _sceneIndex;
 
-
+#if ODIN_INSPECTOR
         [BoxGroup("Unload", VisibleIf = "@_loadSceneMode == LoadSceneMode.Additive")]
-        [SerializeField, EnumToggleButtons]
+        [EnumToggleButtons]
+#endif
+        [SerializeField]
         private SceneUnloadMode _sceneUnloadMode;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Unload")]
-        [SerializeField, MinValue(0), ShowIf("@_sceneUnloadMode == SceneUnloadMode.Delay"), SuffixLabel("S")]
+        [ShowIf("@_sceneUnloadMode == SceneUnloadMode.Delay"), SuffixLabel("S")]
+#endif
+
+        [SerializeField, Min(0)]
         private float _preUnloadDelay;
+
+
+#if ODIN_INSPECTOR
         [BoxGroup("Unload")]
-        [SerializeField, MinValue(0), ShowIf("@_sceneUnloadMode == SceneUnloadMode.Delay"), SuffixLabel("S")]
+        [ShowIf("@_sceneUnloadMode == SceneUnloadMode.Delay"), SuffixLabel("S")]
+#endif
+        [SerializeField, Min(0)]
         private float _postUnloadDelay;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Unload")]
-        [SerializeField, ShowIf("@_sceneUnloadMode == SceneUnloadMode.IReadyable"), ValidateInput("@_readyable is IReadyable")]
+        [ShowIf("@_sceneUnloadMode == SceneUnloadMode.IReadyable"), ValidateInput("@_readyable is IReadyable")]
+#endif
+        [SerializeField]
         private Component _readyable;
 
+#if ODIN_INSPECTOR
         [BoxGroup("Unload")]
+        [ShowIf("_lockAtLoad")]
+#endif
         [Tooltip("Recocking means to enable ")]
-        [SerializeField, ShowIf("_lockAtLoad")]
+        [SerializeField]
         private bool _unlockAfterUnload = true;
-        #region Events
+#region Events
         [SerializeField, EventsGroup]
         private UnityEvent OnStartLoadingScene;
         [SerializeField, EventsGroup]
@@ -70,10 +109,10 @@ namespace Phoder1.Core
         private UnityEvent OnStartUnloadingScene;
         [SerializeField, EventsGroup]
         private UnityEvent OnFinishedUnloadingScene;
-        #endregion
+#endregion
 
         private bool _locked = false;
-        #region SceneLoad
+#region SceneLoad
         public void LoadScene() => LoadScene(null);
         public void LoadScene(Action callback) => LoadScene(_loadSceneMode, callback);
         public void LoadScene(LoadSceneMode loadSceneMode, Action callback = null)
@@ -217,8 +256,8 @@ namespace Phoder1.Core
                     UnloadScene();
             }
         }
-        #endregion
-        #region Unload
+#endregion
+#region Unload
 
         private void UnloadScene()
         {
@@ -277,7 +316,7 @@ namespace Phoder1.Core
 
             OnFinishedUnloadingScene?.Invoke();
         }
-        #endregion
+#endregion
 #if UNITY_EDITOR
 
         private string[] ScenesNames
