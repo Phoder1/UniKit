@@ -8,6 +8,6 @@ Absolute dependencies:
 - DoTween (free is ok)
 
 
-Some scripts use Odin Inspector but are wrapped in Odin_Inspector define, so they support projects without odin inspector.
+Some scripts use Odin Inspector or Zenject but are wrapped in defines, so they support projects without those packages.
 
 The collection adds a Phoder1Core define which can be used to determine if the package is used in the project.
