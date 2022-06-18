@@ -227,12 +227,12 @@ namespace Phoder1.Core.Types
         #region Asserts
         public static Result Assert(this bool result, string errorMessage)
             => result ? Result.Success() : Result.Failed(errorMessage);
-        public static Result AssertNull<T>(this T obj, string errorMessage)
+        public static Result AssertNull<T>(this T obj, string errorMessage = null)
             where T : class
-            => (obj != null).Assert(errorMessage);
-        public static Result AssertNull<T>(this T? obj, string errorMessage)
+            => (obj != null).Assert(errorMessage ?? $"Null reference");
+        public static Result AssertNull<T>(this T? obj, string errorMessage = null)
             where T : struct
-            => (obj.HasValue).Assert(errorMessage);
+            => (obj.HasValue).Assert(errorMessage ?? $"Null reference");
         public static Result AssertNullOrEmpty<T>(this IEnumerable<T> objects, string errorMessage)
             => (objects == null || !objects.Any()).Assert(errorMessage);
         #endregion
@@ -257,6 +257,17 @@ namespace Phoder1.Core.Types
             logger?.Log(logType, tag, msg);
         }
 #endif
-#endregion
+
+        public static void Throw<T>(this Result<T> result)
+        {
+            if (!result)
+                throw new Exception(result.ErrorMessage);
+        }
+        public static void Throw(this Result result)
+        {
+            if (!result)
+                throw new Exception(result.ErrorMessage);
+        }
+        #endregion
     }
 }
