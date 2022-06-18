@@ -1,7 +1,7 @@
 {
-  "name": "com.alontalmi.utillities",
+  "name": "com.alontalmi.phoder1core",
   "version": "0.0.1",
-  "displayName": "Alon Talmi's Utillities",
+  "displayName": "Phoder1's Utillities",
   "description": "Collection of my C# and Unity utillities packed as a unity package. Aimed to be simple to use.",
   "unity": "2021.3",
   "keywords": [

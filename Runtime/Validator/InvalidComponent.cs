@@ -1,10 +1,12 @@
+using Phoder1.Core.Types;
 using System;
 using UnityEngine;
 
 namespace Phoder1.Core.QA
 {
     [Obsolete]
-    public class InvalidComponent : MonoBehaviour, IReflectionValidateable
+    [NullReferenceValidate]
+    public class InvalidComponent : MonoBehaviour
     {
 #pragma warning disable
         [SerializeField]
@@ -16,5 +18,8 @@ namespace Phoder1.Core.QA
             _privateUnassigned = null;
             PublicUnassigned = null;
         }
+
+        public Result IsValid()
+            => false;
     }
 }

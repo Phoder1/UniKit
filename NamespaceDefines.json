@@ -1,0 +1,16 @@
+/*
+For each group the package will check if the namespace exists,
+and if it does will add the appropriate define to the build settings
+*/
+{
+  "defines": [
+    {
+      "Namespace": "Zenject",
+      "Define": "Zenject"
+    },
+    {
+      "Namespace": "DG.Tweening",
+      "Define": "DG Tweening"
+    }
+  ]
+}

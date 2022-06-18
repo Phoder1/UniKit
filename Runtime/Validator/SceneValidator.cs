@@ -1,3 +1,4 @@
+using Phoder1.Core.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,9 +9,12 @@ using UnityEngine.SceneManagement;
 
 namespace Phoder1.Core.QA
 {
+    [AttributeUsage(AttributeTargets.Field)]
     public class IgnoreValidationAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Field)]
     public class ValidateArrayAttribute : Attribute { }
-    public interface IReflectionValidateable { }
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class)]
+    public class NullReferenceValidate : Attribute { }
     /// <summary>
     /// Used to check if a component is properly assigned, mainly used inside SceneValidator check (both ingame and in editor!)
     /// </summary>
@@ -22,32 +26,19 @@ namespace Phoder1.Core.QA
         /// </summary>
         /// <param name="InvalidReasons">If invalid, all the reasons</param>
         /// <returns>Whether the class is valid or not</returns>
-        bool IsValid(out string[] InvalidReasons);
+        Result IsValid();
     }
     public static class SceneValidator
     {
         private static Scene _lastSceneChecked;
         private static List<InvalidLogReport> _reports;
 
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void InitValidator()
-        {
-            SceneManager.sceneLoaded += AutomatedSceneValidityCheck;
 
-            void AutomatedSceneValidityCheck(Scene scene, LoadSceneMode loadSceneMode) => ValidateScene(scene);
-        }
-
-
-        [UnityEditor.MenuItem("MarGish/Validate Scene/Validate Current Scene")]
-        public static bool ValidateCurrentScene()
-            => ValidateCurrentScene(true);
-#endif
-        public static bool ValidateCurrentScene(bool OutputLogs = true)
+        public static Result ValidateCurrentScene(bool OutputLogs = true)
             => ValidateScene(SceneManager.GetActiveScene(), OutputLogs);
-        public static bool ValidateScene(Scene scene, bool OutputLogs = true)
+        public static Result ValidateScene(Scene scene, bool OutputLogs = true)
         {
-            bool _isValid = true;
+            Result _isValid = true;
             if (_reports == null)
                 _reports = new List<InvalidLogReport>();
             else
@@ -57,33 +48,36 @@ namespace Phoder1.Core.QA
 
             if (!scene.IsValid())
             {
-                Log(logMessages: "Scene is invalid!");
-                return false;
+                var msg = "Scene is invalid!";
+                Log(msg);
+                return Result.Failed(msg);
             }
 
             foreach (var validateable in FindAllInScene<IValidateable>(scene))
-                if (!validateable.IsValid(out string[] reasons))
-                    Log(validateable as Component, reasons);
+            {
+                var valid = validateable.IsValid();
+                if (!valid)
+                    Log(valid.ErrorMessage, validateable as Component);
+            }
 
-            foreach (var reflectionValidateable in FindAllInScene<IReflectionValidateable>(scene))
-                if (!reflectionValidateable.NullReferencesReflectionValidator(out string[] reasons))
-                    Log(reflectionValidateable as Component, reasons);
+            foreach (var reflectionValidateable in FindAllInSceneWithAttribute<NullReferenceValidate>(scene))
+            {
+                var valid = NullReferencesReflectionValidate(reflectionValidateable);
+                if (!valid)
+                    Log(valid.ErrorMessage, reflectionValidateable);
+            }
 
             if (OutputLogs)
                 OutputLastLog();
 
             return _isValid;
 
-            void Log(Component context = null, params string[] logMessages)
+            void Log(string msg, Component context = null)
             {
-                _isValid = false;
-                _reports.Add(new InvalidLogReport(context, logMessages));
+                _isValid = Result.Failed(string.Join("\n", _isValid.ErrorMessage, msg));
+                _reports.Add(new InvalidLogReport(context, msg.Split("\n")));
             }
         }
-
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem("MarGish/Validate Scene/Output Last Log")]
-#endif
         public static void OutputLastLog()
         {
             if (_lastSceneChecked == null || _lastSceneChecked == null || string.IsNullOrEmpty(_lastSceneChecked.name))
@@ -102,25 +96,19 @@ namespace Phoder1.Core.QA
                 DebugLog(message, _reports[0].Object, LogType.Warning);
             }
         }
-        private static void DebugLog(string message, UnityEngine.Object context = null, LogType logType = LogType.Log)
+        public static void DebugLog(string message, UnityEngine.Object context = null, LogType logType = LogType.Log)
             => Debug.unityLogger.Log(logType, "[SceneValidator]", message, context);
 
-        public static bool NullReferencesReflectionValidator(this IReflectionValidateable toValidate, out string[] invalidReasons)
-            => NullReferencesReflectionValidator(toValidate as object, out invalidReasons);
-        public static bool NullReferencesReflectionValidator(this IValidateable toValidate, out string[] invalidReasons)
-            => NullReferencesReflectionValidator(toValidate as object, out invalidReasons);
-        public static bool NullReferencesReflectionValidator(object toValidate, out string[] invalidReasons)
+        public static Result NullReferencesReflectionValidate(object toValidate)
         {
             var nullFields = GetNullFields(toValidate).ToArray();
 
             if (nullFields == null || nullFields.Length == 0)
-            {
-                invalidReasons = default;
-                return true;
-            }
+                return Result.Success();
 
-            invalidReasons = Array.ConvertAll(nullFields, (x) => $"{x.Name.ToDisplayName()} is not assigned!");
-            return false;
+            var errors = Array.ConvertAll(nullFields, (x) => $"{x.Name.ToDisplayName()} is not assigned!");
+            var result = Result.Failed(string.Join("\n", errors));
+            return result;
         }
         private static IEnumerable<FieldInfo> GetNullFields(object obj)
         {
@@ -153,17 +141,17 @@ namespace Phoder1.Core.QA
             }
         }
 
-        public static bool NullReferencesReflectionValidator(this IValidateable validateable, out string[] invalidReasons, params string[] exactObjectsNames)
+        public static Result NullReferencesReflectionValidate(this IValidateable validateable, out string[] invalidReasons, params string[] exactObjectsNames)
         {
             var reasons = Reasons();
             if (reasons == null || !reasons.Any())
             {
                 invalidReasons = default;
-                return true;
+                return Result.Success();
             }
 
             invalidReasons = reasons.ToArray();
-            return false;
+            return Result.Failed(string.Join("\n", invalidReasons));
 
             IEnumerable<string> Reasons()
             {
@@ -183,7 +171,7 @@ namespace Phoder1.Core.QA
             }
         }
 
-        public static bool Validator(this IValidateable validateable, out string[] invalidReasons, params (Func<bool> condition, string message)[] input)
+        public static Result Validator(this IValidateable validateable, out string[] invalidReasons, params (Func<bool> condition, string message)[] input)
         {
             List<string> reasons = new List<string>();
 
@@ -195,11 +183,27 @@ namespace Phoder1.Core.QA
             if (reasons == null || reasons.Count == 0)
             {
                 invalidReasons = default;
-                return true;
+                return Result.Success();
             }
 
             invalidReasons = reasons.ToArray();
-            return false;
+            return Result.Failed(invalidReasons.ToLines());
+        }
+        private static IEnumerable<MonoBehaviour> FindAllInSceneWithAttribute<TAttribute>(Scene scene)
+            where TAttribute : Attribute
+        {
+            var rootObjects = scene.GetRootGameObjects();
+
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                var validateables = rootObjects[i]
+                    .GetComponentsInChildren<MonoBehaviour>()
+                    .Where((x) => x.GetType().GetCustomAttribute<TAttribute>() != null);
+
+                if (validateables != null)
+                    foreach (var x in validateables)
+                        yield return x;
+            }
         }
         private static IEnumerable<T> FindAllInScene<T>(Scene scene)
         {

@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 public static class StringExt
 {
@@ -65,5 +68,24 @@ public static class StringExt
         }
 
         return str.ToUpper();
+    }
+    public static string RemoveAllWhitespaces(this string str)
+        => string.Concat(str.Where(c => !char.IsWhiteSpace(c)));
+
+    public static string RemoveSpecialCharacters(this string str)
+        => Regex.Replace(str, "[^a-zA-Z0-9% ._]", string.Empty);
+
+    public static string SpaceToUnderScore(this string str)
+        => str.Replace(' ', '_');
+
+    public static string ToLines(this IEnumerable<string> lines)
+        => string.Join("\n", lines);
+
+    public static IEnumerable<string> ToLines(this string lines)
+        => lines.Split("\n").Trim();
+    public static IEnumerable<string> Trim(this IEnumerable<string> strs)
+    {
+        foreach (var str in strs)
+            yield return str.Trim();
     }
 }

@@ -6,41 +6,6 @@ namespace Phoder1.Core
 {
     public static class EnumerableExt
     {
-        public static string ToDisplayName(this IEnumerable enumerable, string seperator = ",")
-        {
-            if (enumerable == null)
-                return null;
-
-            string name = null;
-
-            foreach (var current in enumerable)
-            {
-                if (name != null)
-                    name += seperator + " ";
-
-                name += current.ToString();
-            }
-
-            return name;
-        }
-        public static string ToDisplayName<T>(this IEnumerable<T> enumerable, Func<T, string> toDisaplyName, string seperator = ",")
-        {
-            if (toDisaplyName == null || enumerable == null)
-                return null;
-
-            string name = null;
-
-            foreach (var current in enumerable)
-            {
-                if (name != null)
-                    name += seperator + " ";
-
-                name += toDisaplyName.Invoke(current);
-            }
-
-            return name;
-        }
-
         public static List<T> Sort<T>(this IReadOnlyList<T> list, Comparison<T> comparison)
         {
             List<T> newArray = new List<T>(list);

@@ -7,44 +7,25 @@ namespace Phoder1.Editor.Define
     using UnityEditor;
 
     /// <summary>
-    /// Defines the ODIN_INSPECTOR symbol.
+    /// Automatically adds a define to Unity with the package's name
     /// </summary>
-    internal static class EnsureOdinInspectorDefine
+    internal static class EnsureDefines
     {
-        private static readonly string[] DEFINES = new string[] { "Phoder1Core" };
+        private static readonly string define
+            = typeof(EnsureDefines)
+            .Assembly
+            .FindContainingPackage()
+            .displayName
+            .RemoveSpecialCharacters()
+            .SpaceToUnderScore()
+            .RemoveAllWhitespaces();
 
         [InitializeOnLoadMethod]
         private static void EnsureScriptingDefineSymbol()
         {
-            var currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
-
-            if (currentTarget == BuildTargetGroup.Unknown)
+            using (DefinesStream stream = new DefinesStream())
             {
-                return;
-            }
-
-            var definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(currentTarget).Trim();
-            var defines = definesString.Split(';');
-
-            bool changed = false;
-
-            foreach (var define in DEFINES)
-            {
-                if (defines.Contains(define) == false)
-                {
-                    if (definesString.EndsWith(";", StringComparison.InvariantCulture) == false)
-                    {
-                        definesString += ";";
-                    }
-
-                    definesString += define;
-                    changed = true;
-                }
-            }
-
-            if (changed)
-            {
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(currentTarget, definesString);
+                stream.AddDefine(define);
             }
         }
     }

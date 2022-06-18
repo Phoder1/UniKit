@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 #endif
 
-namespace Phoder1.Core.Result
+namespace Phoder1.Core.Types
 {
     public delegate Result Operation();
     public delegate Result<T> Operation<T>();
@@ -17,7 +17,7 @@ namespace Phoder1.Core.Result
         public static Result<T> Success<T>(T value)
             => Result<T>.Success(value);
         public static Result Failed(string errorMessage = null)
-            => new Result(null);
+            => new Result(errorMessage);
         public static Result<T> Failed<T>(string errorMessage = null)
             => Result<T>.Failed(errorMessage);
         public Result(string errorMessage)
