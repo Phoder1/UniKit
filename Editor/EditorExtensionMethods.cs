@@ -8,13 +8,22 @@ using Object = UnityEngine.Object;
 
 public static class EditorExtensionMethods
 {
-    public static void FlatProperty(this SerializedProperty property)
+    public static void FlatProperty(this SerializedProperty property, GUIContent guiContent = null)
     {
-        foreach (var child in property.GetChildren())
-            EditorGUILayout.PropertyField(child);
+        var childs = property.GetChilds();
+
+        int childCount = 0;
+        foreach (var child in childs)
+        {
+            childCount++;
+            EditorGUILayout.PropertyField(child, guiContent);
+        }
+
+        if (childCount == 0)
+            EditorGUILayout.PropertyField(property);
     }
 
-    public static IEnumerable<SerializedProperty> GetChildren(this SerializedProperty property)
+    public static IEnumerable<SerializedProperty> GetChilds(this SerializedProperty property)
     {
         property = property.Copy();
         var nextElement = property.Copy();
