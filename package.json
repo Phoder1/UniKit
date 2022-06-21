@@ -1,9 +1,15 @@
 {
-  "name": "com.alontalmi.phoder1core",
+  "name": "com.phoder1.UniKit",
   "version": "0.0.1",
-  "displayName": "Phoder1's Utillities",
-  "description": "Collection of my C# and Unity utillities packed as a unity package. Aimed to be simple to use.",
+  "displayName": "UniKit",
+  "description": "Collection of C# and Unity utillities packed as a unity package. Aimed to be simple to use.",
   "unity": "2021.3",
+  "unityRelease": "4f1",
+  "documentationUrl": "https://github.com/Phoder1/UniKit",
+  "changelogUrl": "https://github.com/Phoder1/UniKit/blob/adbc4921b8303f457d2453c7fda5c1f2024a836b/CHANGELOG.md",
+  "licensesUrl": "https://github.com/Phoder1/UniKit/blob/adbc4921b8303f457d2453c7fda5c1f2024a836b/LICENSE",
+  "hideInEditor": "false",
+  "license": "MIT-0"
   "keywords": [
     "utillities",
     "ease of use",
@@ -12,6 +18,6 @@
   "author": {
     "name": "Alon Talmi",
     "email": "alontalmi@protonmail.com",
-    "url": "https://github.com/Phoder1"
+    "url": "https://alontalmi.com/"
   }
 }
