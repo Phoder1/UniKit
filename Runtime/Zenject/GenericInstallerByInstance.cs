@@ -1,7 +1,7 @@
-using UnityEngine;
-using Zenject;
 using Phoder1.Core.QA;
 using Phoder1.Core.Types;
+using UnityEngine;
+using Zenject;
 
 namespace Phoder1.Core.Zenject
 {
@@ -15,7 +15,8 @@ namespace Phoder1.Core.Zenject
         public override void InstallBindings()
         {
             Container.Bind<TBind>().FromInstance(_instance);
-            Container.Bind<TInstance>().FromInstance(_instance);
+            if (typeof(TBind) != typeof(TInstance))
+                Container.Bind<TInstance>().FromInstance(_instance);
         }
 
         public Result IsValid()

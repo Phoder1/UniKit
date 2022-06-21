@@ -12,7 +12,7 @@ public class InstallManager : MonoInstaller
             if (t == null)
                 continue;
 
-            var installers = t.GetComponentsInChildren<IInstaller>();
+            var installers = t.GetComponents<IInstaller>();
             foreach (var installer in installers)
             {
                 if (installer == null || (object)installer == this)

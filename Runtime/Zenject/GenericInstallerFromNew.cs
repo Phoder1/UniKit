@@ -1,11 +1,14 @@
 using Zenject;
 
-public class GenericInstallerFromNew<TBind, TImplement> : MonoInstaller
-    where TImplement : class, TBind, new()
-    where TBind : class
+namespace Phoder1.Core.Zenject
 {
-    public override void InstallBindings()
+    public class GenericInstallerFromNew<TBind, TImplement> : MonoInstaller
+        where TImplement : class, TBind, new()
+        where TBind : class
     {
-        Container.Bind<TBind>().FromNew();
+        public override void InstallBindings()
+        {
+            Container.Bind<TBind>().FromNew();
+        }
     }
 }
