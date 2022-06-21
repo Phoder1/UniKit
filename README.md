@@ -1,5 +1,5 @@
-# com.alontalmi.utillities
-Collection of my C# and Unity utillities packed as a unity package.
+#  UniKit
+Collection of C# and Unity utillities packed as a unity package.
 
 The collection is aimed at more general scripts that usually require less dependencies and are easy to use.
 
