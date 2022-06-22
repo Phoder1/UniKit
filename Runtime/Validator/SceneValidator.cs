@@ -1,4 +1,4 @@
-using Phoder1.Core.Types;
+using UniKit.Core.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Phoder1.Core.QA
+namespace UniKit.QA
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class IgnoreValidationAttribute : Attribute { }

@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 #endif
 using System;
 
-namespace Phoder1
+namespace UniKit.Attributes
 {
     public static class GroupsOrder
     {

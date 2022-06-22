@@ -5,7 +5,7 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 
-namespace Phoder1.Core.Effects
+namespace UniKit.Effects
 {
     public interface IEffectRecipient<out T>
     {

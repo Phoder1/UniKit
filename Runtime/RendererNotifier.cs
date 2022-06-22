@@ -3,7 +3,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 
 #endif
-namespace Phoder1.Core
+namespace UniKit
 {
     public class RendererNotifier : MonoBehaviour
     {

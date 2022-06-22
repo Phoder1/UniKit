@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Phoder1.Reflection
+namespace UniKit.Reflection
 {
     public static class ReflectionExt
     {

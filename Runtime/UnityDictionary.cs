@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public class UnityDictionary<TKey, TValue> : MonoBehaviour, IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     {

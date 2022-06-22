@@ -1,9 +1,10 @@
 #if UNITY_EDITOR
 
-namespace Phoder1.Editor.Define
+namespace UniKit.Editor.Define
 {
     using System;
     using System.Linq;
+    using UniKit.Core;
     using UnityEditor;
 
     /// <summary>

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Phoder1.Patterns
+namespace UniKit.Patterns
 {
     public interface IState
     {

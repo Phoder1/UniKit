@@ -1,8 +1,8 @@
-using Phoder1.Core.Types;
+using UniKit.Core.Types;
 using System;
 using UnityEngine;
 
-namespace Phoder1.Core.QA
+namespace UniKit.QA
 {
     [Obsolete]
     [NullReferenceValidate]

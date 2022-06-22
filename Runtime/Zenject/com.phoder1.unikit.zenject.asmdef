@@ -1,8 +1,9 @@
 {
-    "name": "com.alontalmi.utillities",
-    "rootNamespace": "Phoder1.Core",
+    "name": "com.phoder1.unikit.zenject",
+    "rootNamespace": "UniKit.Zenject",
     "references": [
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+        "GUID:1b1e66c6d156adc469880a7bb0a09cc0",
+        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -10,7 +11,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "Zenject"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

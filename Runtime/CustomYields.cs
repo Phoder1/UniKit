@@ -1,7 +1,8 @@
+#if DG_Tweening
 using DG.Tweening;
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit.DoTween
 {
 
     public static class CustomYieldExt
@@ -24,3 +25,4 @@ namespace Phoder1.Core
         }
     }
 }
+#endif

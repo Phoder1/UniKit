@@ -1,10 +1,10 @@
-using Phoder1.Async;
+using UniKit.Async;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Phoder1.Core.Cooldown
+namespace UniKit.Cooldown
 {
     public class CooldownHandler : ICooldownHandler
     {

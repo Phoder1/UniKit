@@ -1,9 +1,9 @@
-﻿using Phoder1.Core.Types;
+﻿using UniKit.Core.Types;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace Phoder1.Editor
+namespace UniKit.Editor
 {
     public class DefinesStream : IDisposable
     {

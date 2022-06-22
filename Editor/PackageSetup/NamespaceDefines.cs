@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using System.Text;
+using UniKit.Core;
 using UnityEditor;
 using static Newtonsoft.Json.JsonConvert;
 
-namespace Phoder1.Editor
+namespace UniKit.Editor
 {
     public static class NamespaceDefines
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public interface IResetable
     {

@@ -1,10 +1,10 @@
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
-using Phoder1.Reflection;
-using Phoder1.Core.Attributes;
+using UniKit.Reflection;
+using UniKit.Core.Attributes;
 
-namespace Phoder1.Editor.Attributes
+namespace UniKit.Editor.Attributes
 {
     [CustomPropertyDrawer(typeof(NamedArrayAttribute))]
     public class NamedArrayDrawer : PropertyDrawer

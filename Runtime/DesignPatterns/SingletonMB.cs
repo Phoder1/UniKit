@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Phoder1
+namespace UniKit.Patterns
 {
     public class Singleton<T> where T : Singleton<T>, new()
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public class LazyGameObject<T>
         where T : Component

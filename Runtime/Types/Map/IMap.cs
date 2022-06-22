@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Phoder1.Core.Types
+namespace UniKit.Types
 {
     public interface IReadonlyMap<T1, T2> :
         IEnumerable<KeyValuePair<T1, T2>>

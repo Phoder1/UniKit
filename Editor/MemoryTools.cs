@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit.Core
 {
     public static class MemoryTools
     {

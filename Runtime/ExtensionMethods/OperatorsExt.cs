@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public enum OperatorEnum
     {
@@ -20,8 +20,8 @@ namespace Phoder1.Core
 
     public static class OperatorsExt
     {
-        public static bool IsEquals(this object obj1 , object obj2) => obj1==obj2;
-        
+        public static bool IsEquals(this object obj1, object obj2) => obj1 == obj2;
+
 
 
         //public static int EffectOperator(this int val, int modifingValue, OperatorEnum effectOperator)
@@ -30,7 +30,7 @@ namespace Phoder1.Core
         {
             switch (effectOperator)
             {
-                   case OperatorEnum.Add:
+                case OperatorEnum.Add:
                     return val + modifingValue;
                 case OperatorEnum.Multiply:
                     return val * modifingValue;
@@ -43,7 +43,7 @@ namespace Phoder1.Core
                 case OperatorEnum.Power:
                     return Mathf.Pow(val, modifingValue);
                 case OperatorEnum.PrecentageAdd:
-                    return val + val*modifingValue/100;
+                    return val + val * modifingValue / 100;
                 case OperatorEnum.PrecentageReduce:
                     return val - val * modifingValue / 100;
                 case OperatorEnum.PrecentageSet:
@@ -53,7 +53,7 @@ namespace Phoder1.Core
                 case OperatorEnum.PrecentagePower:
                     modifingValue = val * modifingValue / 100;
                     return Mathf.Pow(val, modifingValue);
-         
+
             }
 
             throw new System.Exception($"EffectOperator Is not valid!");

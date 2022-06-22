@@ -1,7 +1,7 @@
 using System.Reflection;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
-namespace Phoder1.Editor
+namespace UniKit.Editor
 {
     public static class PackageExt
     {

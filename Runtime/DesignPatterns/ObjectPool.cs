@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Phoder1.Patterns
+namespace UniKit.Patterns
 {
     public interface IPoolable
     {

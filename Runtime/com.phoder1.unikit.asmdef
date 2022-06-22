@@ -1,12 +1,10 @@
 {
-    "name": "com.alontalmi.utillities.editor",
-    "rootNamespace": "Phoder1.Editor",
+    "name": "com.phoder1.unikit",
+    "rootNamespace": "UniKit",
     "references": [
-        "GUID:1b1e66c6d156adc469880a7bb0a09cc0"
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

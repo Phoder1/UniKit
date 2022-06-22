@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public class ExitGame : MonoBehaviour
     {

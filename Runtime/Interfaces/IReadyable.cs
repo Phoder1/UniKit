@@ -1,6 +1,9 @@
 using UniRx;
 
-public interface IReadyable : IReactiveProperty<bool>
+namespace UniKit
 {
-    bool Ready { get; }
+    public interface IReadyable : IReactiveProperty<bool>
+    {
+        bool Ready { get; }
+    }
 }

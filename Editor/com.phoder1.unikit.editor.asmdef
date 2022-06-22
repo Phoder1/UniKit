@@ -1,0 +1,18 @@
+{
+    "name": "com.phoder1.unikit.editor",
+    "rootNamespace": "UniKit.Editor",
+    "references": [
+        "GUID:1b1e66c6d156adc469880a7bb0a09cc0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

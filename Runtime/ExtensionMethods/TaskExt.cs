@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Phoder1.Async
+namespace UniKit.Async
 {
     public static class TaskExt
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     [Flags]
     public enum ConditionEnum

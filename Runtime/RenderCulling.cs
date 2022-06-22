@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 
 #endif
-namespace Phoder1.Core
+namespace UniKit
 {
     public class RenderCulling : MonoBehaviour
     {

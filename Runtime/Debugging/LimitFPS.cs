@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 #endif
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public class LimitFPS : MonoBehaviour
     {

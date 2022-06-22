@@ -1,11 +1,11 @@
-using Phoder1.Core.QA;
-using Phoder1.Core.Types;
+using UniKit.Core.QA;
+using UniKit.Core.Types;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Phoder1.Editor.QA
+namespace UniKit.Editor.QA
 {
     public static class ValidatorEditor
     {

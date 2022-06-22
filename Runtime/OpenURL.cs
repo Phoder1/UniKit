@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public class OpenURL : MonoBehaviour
     {
@@ -14,7 +12,7 @@ namespace Phoder1.Core
             => Open(_url);
         public void Open(string url)
         {
-            if(_openedURL)
+            if (_openedURL)
                 return;
 
             Application.OpenURL(url);

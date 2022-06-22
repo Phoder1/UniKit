@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public static class EnumerableExt
     {

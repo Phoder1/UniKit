@@ -1,8 +1,8 @@
-using Phoder1.Core.Attributes;
+using UniKit.Core.Attributes;
 using UnityEditor;
 using UnityEngine;
 
-namespace Phoder1.Editor
+namespace UniKit.Editor
 {
     [CustomPropertyDrawer(typeof(InlineAttribute))]
     public class InlineDrawer : PropertyDrawer

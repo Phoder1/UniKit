@@ -1,7 +1,7 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace Phoder1.Core.Attributes
+namespace UniKit.Attributes
 {
     public class NamedArrayAttribute : PropertyAttribute
     {

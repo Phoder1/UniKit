@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Phoder1.Core.Types
+namespace UniKit.Types
 {
     [Serializable]
     public class Map<T1, T2> : IMap<T1, T2>

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Phoder1.Core.Cooldown
+namespace UniKit.Cooldown
 {
     [Serializable]
     public class CooldownDefinition : ICooldownDefinition

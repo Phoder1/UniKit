@@ -1,9 +1,9 @@
-using Phoder1.Core.QA;
-using Phoder1.Core.Types;
+using UniKit.Core.QA;
+using UniKit.Core.Types;
 using UnityEngine;
 using Zenject;
 
-namespace Phoder1.Core.Zenject
+namespace UniKit.Core.Zenject
 {
     public class GenericInstallerByInstance<TBind, TInstance> : MonoInstaller, IValidateable
         where TInstance : class, TBind

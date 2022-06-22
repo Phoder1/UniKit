@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Phoder1.Projectile
+namespace UniKit.Projectile
 {
     public interface ITrigger
     {

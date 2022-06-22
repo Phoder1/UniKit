@@ -9,7 +9,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-namespace Phoder1.Core
+namespace UniKit.Core
 {
     //Todo: Make a classic editor script! class is too dependent on Odin inspector!
     public enum SceneLoadMode { NextInBuild = 0, ByName = 1, ByIndex = 2 }

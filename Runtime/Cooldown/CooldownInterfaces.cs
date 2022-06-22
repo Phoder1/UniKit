@@ -1,6 +1,6 @@
 using System;
 
-namespace Phoder1.Core.Cooldown
+namespace UniKit.Cooldown
 {
     public interface ICooldownDefinition
     {

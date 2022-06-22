@@ -1,11 +1,11 @@
-using Phoder1.Core.Attributes;
-using Phoder1.Patterns;
+using UniKit.Core.Attributes;
+using UniKit.Patterns;
 using System;
 using System.Collections;
 using UniRx;
 using UnityEngine;
 
-namespace Phoder1.SpaceEmpires
+namespace UniKit
 {
     public interface ITurns
     {

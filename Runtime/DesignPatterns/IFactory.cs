@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Phoder1
+namespace UniKit.Patterns
 {
     public interface IFactory<T>
     {

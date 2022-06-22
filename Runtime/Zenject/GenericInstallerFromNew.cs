@@ -1,6 +1,6 @@
 using Zenject;
 
-namespace Phoder1.Core.Zenject
+namespace UniKit.Core.Zenject
 {
     public class GenericInstallerFromNew<TBind, TImplement> : MonoInstaller
         where TImplement : class, TBind, new()

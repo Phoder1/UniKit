@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
-namespace Phoder1.Core.Types
+namespace UniKit.Types
 {
     //Todo: probably possible to create this attribute with a classic editor drawer
 #if ODIN_INSPECTOR

@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 #endif
 
-namespace Phoder1.Core.Types
+namespace UniKit.Types
 {
     public delegate Result Operation();
     public delegate Result<T> Operation<T>();

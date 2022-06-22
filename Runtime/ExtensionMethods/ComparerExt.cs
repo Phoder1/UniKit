@@ -1,6 +1,6 @@
 using System;
 
-namespace Phoder1.Core
+namespace UniKit
 {
     public static class ComparerExt
     {

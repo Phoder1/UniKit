@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Phoder1.Debugging
+namespace UniKit.Debugging
 {
     public class EventDebugLog : MonoBehaviour
     {

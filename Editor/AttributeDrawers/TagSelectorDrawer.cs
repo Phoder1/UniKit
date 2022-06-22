@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Phoder1.Editor.Attributes
+namespace UniKit.Editor.Attributes
 {
     //Original by DYLAN ENGELMAN http://jupiterlighthousestudio.com/custom-inspectors-unity/
     //Altered by Brecht Lecluyse http://www.brechtos.com

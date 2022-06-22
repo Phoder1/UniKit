@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UniRx;
 
-namespace Phoder1.Patterns
+namespace UniKit.Patterns
 {
     public interface ITokenReciever
     {

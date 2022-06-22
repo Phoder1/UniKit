@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Phoder1.Core.Attributes
+namespace UniKit.Attributes
 {
     public class InlineAttribute : PropertyAttribute
     {
