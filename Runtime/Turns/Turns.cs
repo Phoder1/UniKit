@@ -1,4 +1,4 @@
-using UniKit.Core.Attributes;
+using UniKit.Attributes;
 using UniKit.Patterns;
 using System;
 using System.Collections;

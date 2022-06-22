@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 using UniKit.Reflection;
-using UniKit.Core.Attributes;
+using UniKit.Attributes;
 
 namespace UniKit.Editor.Attributes
 {

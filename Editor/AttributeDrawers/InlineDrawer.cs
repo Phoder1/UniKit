@@ -1,4 +1,4 @@
-using UniKit.Core.Attributes;
+using UniKit.Attributes;
 using UnityEditor;
 using UnityEngine;
 

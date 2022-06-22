@@ -3,13 +3,14 @@ using Sirenix.OdinInspector;
 #endif
 using System;
 using System.Collections;
+using UniKit.Attributes;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-namespace UniKit.Core
+namespace UniKit
 {
     //Todo: Make a classic editor script! class is too dependent on Odin inspector!
     public enum SceneLoadMode { NextInBuild = 0, ByName = 1, ByIndex = 2 }

@@ -1,5 +1,5 @@
-using UniKit.Core.QA;
-using UniKit.Core.Types;
+using UniKit.QA;
+using UniKit.Types;
 using UnityEngine;
 using Zenject;
 

@@ -1,46 +1,63 @@
-using System.Linq;
-using System.Text;
-using System.Threading;
-using UnityEngine;
+using System;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEditor.PackageManager;
+using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
-public class InstalledPackages : AssetPostprocessor
+namespace UniKit.Editor
 {
-    private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+    public class InstalledPackages : AssetPostprocessor
     {
-        var inPackages = importedAssets.Any(path => path.StartsWith("Packages/")) ||
-            deletedAssets.Any(path => path.StartsWith("Packages/")) ||
-            movedAssets.Any(path => path.StartsWith("Packages/")) ||
-            movedFromAssetPaths.Any(path => path.StartsWith("Packages/"));
-
-        if (inPackages)
+        public enum ModificationType
         {
-            InitializeOnLoad();
+            Imported,
+            Deleted,
+            Moved,
+            MovedFromAsset
         }
-    }
+        //private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+        //{
+        //    return;
+        //    var customPackageSources = (PackageSource.Git | PackageSource.Local | PackageSource.Unknown | PackageSource.Embedded);
+        //    //WIP
+        //    HandlePaths(importedAssets, ModificationType.Imported);
+        //    HandlePaths(deletedAssets, ModificationType.Deleted);
+        //    HandlePaths(movedAssets, ModificationType.Moved);
+        //    HandlePaths(movedFromAssetPaths, ModificationType.MovedFromAsset);
 
-    [InitializeOnLoadMethod]
-    private static void InitializeOnLoad()
-    {
-        var listRequest = Client.List(true);
-        while (!listRequest.IsCompleted)
-            Thread.Sleep(100);
+        //    bool TryGetChangedPackage(string path, out PackageInfo package)
+        //    {
+        //        //Check if the package is a custom package
+        //        if (!path.StartsWith("Packages/"))
+        //        {
+        //            package = default;
+        //            return false;
+        //        }
 
-        if (listRequest.Error != null)
+        //        package = PackageInfo.FindForAssetPath(path);
+
+        //        if (package == null || !customPackageSources.HasFlag(package.source))
+        //            return false;
+
+        //        return true;
+        //    }
+        //    void HandlePaths(string[] paths, ModificationType modificationType)
+        //    {
+        //        foreach (var path in paths)
+        //            if (!string.IsNullOrWhiteSpace(path) && TryGetChangedPackage(path, out var package))
+        //                SendCallbacks(package, path, modificationType);
+        //    }
+        //}
+        private static void SendCallbacks(PackageInfo package, string path, ModificationType modificationType)
         {
-            Debug.Log("Error: " + listRequest.Error.message);
-            return;
-        }
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                if (PackageInfo.FindForAssembly(assembly) != package)
+                    continue;
 
-        var packages = listRequest.Result;
-        var text = new StringBuilder("Packages:\n");
-        foreach (var package in packages)
-        {
-            if (package.source == PackageSource.Registry)
-                text.AppendLine($"{package.name}: {package.version} [{package.resolvedPath}]");
+                assembly.GetTypes();
+            }
         }
-
-        Debug.Log(text.ToString());
     }
 }
