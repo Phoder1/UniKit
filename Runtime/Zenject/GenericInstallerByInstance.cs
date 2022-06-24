@@ -14,6 +14,9 @@ namespace UniKit.Core.Zenject
 
         public override void InstallBindings()
         {
+            if (!(_instance is MonoBehaviour))
+                Container.Inject(_instance);
+
             Container.Bind<TBind>().FromInstance(_instance);
             if (typeof(TBind) != typeof(TInstance))
                 Container.Bind<TInstance>().FromInstance(_instance);

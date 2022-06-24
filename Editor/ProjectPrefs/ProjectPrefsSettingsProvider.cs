@@ -19,7 +19,7 @@ namespace UniKit.Editor.Project
 
         public static bool IsSettingsAvailable()
         {
-            return File.Exists(ProjectPrefs.ProjectPrefAssetPath);
+            return File.Exists(ProjectPrefs.PPAssetPath);
         }
 
         // This function is called when the user clicks on the MyCustom element in the Settings window.

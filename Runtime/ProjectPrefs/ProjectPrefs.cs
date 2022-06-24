@@ -1,21 +1,61 @@
 using System;
+using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
+using System.Linq;
+using Object = UnityEngine.Object;
 
 namespace UniKit.Project
 {
     public class ProjectPrefs : ScriptableObject
     {
-        public const string ProjectPrefAssetPath = "Assets/Resources/ProjectPrefAsset.asset";
+        public const string PPResourcesPath = "ProjectPrefAsset";
+        public const string PPAssetPath = "Assets/Resources/ProjectPrefAsset.asset";
 
         [SerializeField]
         private PrefsSettings prefsSettings = new PrefsSettings();
 
-        private static readonly Lazy<ProjectPrefs> prefs = new Lazy<ProjectPrefs>(GetOrCreateSettings);
-        public static ProjectPrefs Prefs => prefs.Value;
+        private static ProjectPrefs prefs;
+        public static ProjectPrefs Prefs
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (prefs == null)
+                {
+                    if (Application.isPlaying)
+                        LoadSettings();
+                    else
+                        prefs = GetOrCreateSettings();
+                }
+#endif
+                return prefs;
+            }
+            private set => prefs = value;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void LoadPrefs()
+        {
+            if (Application.isPlaying)
+                LoadSettings();
+            else
+                Prefs = GetOrCreateSettings();
+        }
+
+        public static void LoadSettings()
+        {
+            Prefs = Resources.Load(PPResourcesPath) as ProjectPrefs;
+        }
+#if UNITY_EDITOR
         private static ProjectPrefs GetOrCreateSettings()
         {
-            ProjectPrefs settings = GetSettings();
+            if (Application.isPlaying)
+                return prefs;
+
+            ProjectPrefs settings = AssetDatabase.LoadAssetAtPath<ProjectPrefs>(PPAssetPath);
 
             if (settings == null)
                 settings = CreateSettings(settings);
@@ -25,47 +65,34 @@ namespace UniKit.Project
 
         private static ProjectPrefs CreateSettings(ProjectPrefs settings)
         {
-            settings = default;
-#if UNITY_EDITOR
             settings = CreateInstance<ProjectPrefs>();
-            AssetDatabase.CreateAsset(settings, ProjectPrefAssetPath);
+            AssetDatabase.CreateAsset(settings, PPAssetPath);
             AssetDatabase.SaveAssets();
-#endif
+
+            List<Object> preloaded = new List<Object>(PlayerSettings.GetPreloadedAssets());
+            preloaded.Add(settings);
+            PlayerSettings.SetPreloadedAssets(preloaded.ToArray());
             return settings;
         }
-
-        private static ProjectPrefs GetSettings()
-        {
-            ProjectPrefs settings;
-#if UNITY_EDITOR
-            if (Application.isPlaying)
-                settings = Resources.Load<ProjectPrefs>(ProjectPrefAssetPath);
-            else
-                settings = AssetDatabase.LoadAssetAtPath<ProjectPrefs>(ProjectPrefAssetPath);
-#else
-            settings = Resources.Load<ProjectPrefs>(ProjectPrefAssetPath);
 #endif
-
-            return settings;
-        }
 
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists.
         /// </summary>
         public static float GetFloat(string key)
-            => Array.Find(GetOrCreateSettings().prefsSettings.floatProperties, (x) => x.Name == key).Value;
+            => Array.Find(Prefs.prefsSettings.floatProperties, (x) => x.Name == key).Value;
 
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists.
         /// </summary>
         public static int GetInt(string key)
-            => Array.Find(GetOrCreateSettings().prefsSettings.intProperties, (x) => x.Name == key).Value;
+            => Array.Find(Prefs.prefsSettings.intProperties, (x) => x.Name == key).Value;
 
         /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists.
         /// </summary>
         public static string GetString(string key)
-            => Array.Find(GetOrCreateSettings().prefsSettings.stringProperties, (x) => x.Name == key).Value;
+            => Array.Find(Prefs.prefsSettings.stringProperties, (x) => x.Name == key).Value;
 
         /// <summary>
         /// Returns true if the given key exists in PlayerPrefs, otherwise returns false.
@@ -73,7 +100,12 @@ namespace UniKit.Project
         /// <param name="key"></param>
         /// <returns></returns>
         public static bool HasKey(string key)
-            => Array.FindIndex(GetOrCreateSettings().prefsSettings.stringProperties, (x) => x.Name == key) != -1;
+        {
+            if (Prefs == null)
+                return false;
+
+            return Prefs.prefsSettings.AllProperties.Any((x) => x.Name == key);
+        }
 
         [Serializable]
         private class PrefsSettings
@@ -85,8 +117,27 @@ namespace UniKit.Project
             [SerializeField]
             public PrefsProperty<float>[] floatProperties;
 
+            public IEnumerable<IPrefsProperty> AllProperties
+            {
+                get
+                {
+                    foreach (var prop in intProperties)
+                        yield return prop;
+                    foreach (var prop in stringProperties)
+                        yield return prop;
+                    foreach (var prop in floatProperties)
+                        yield return prop;
+                }
+            }
+
+
+            public interface IPrefsProperty
+            {
+                string Name { get; }
+                object value { get; }
+            }
             [Serializable]
-            public class PrefsProperty<T>
+            public class PrefsProperty<T> : IPrefsProperty
             {
                 [SerializeField]
                 private string name;
@@ -95,6 +146,7 @@ namespace UniKit.Project
 
                 public string Name => name;
                 public T Value => value;
+                object IPrefsProperty.value => Value;
             }
         }
     }

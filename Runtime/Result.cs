@@ -227,12 +227,24 @@ namespace UniKit.Types
         #region Asserts
         public static Result Assert(this bool result, string errorMessage)
             => result ? Result.Success() : Result.Failed(errorMessage);
+        public static void AssertNullThrow<T>(this T obj, string errorMessage = null)
+            where T : class
+        {
+            if(obj == null)
+                throw new NullReferenceException(errorMessage);
+        }
         public static Result AssertNull<T>(this T obj, string errorMessage = null)
             where T : class
             => (obj != null).Assert(errorMessage ?? $"Null reference");
+        public static void AssertNullThrow<T>(this T? obj, string errorMessage = null)
+            where T : struct
+        {
+            if (!obj.HasValue)
+                throw new NullReferenceException(errorMessage);
+        }
         public static Result AssertNull<T>(this T? obj, string errorMessage = null)
             where T : struct
-            => (obj.HasValue).Assert(errorMessage ?? $"Null reference");
+            => obj.HasValue.Assert(errorMessage ?? $"Null reference");
         public static Result AssertNullOrEmpty<T>(this IEnumerable<T> objects, string errorMessage)
             => (objects == null || !objects.Any()).Assert(errorMessage);
         #endregion

@@ -1,19 +1,25 @@
-using UniKit.Attributes;
-using UniKit.Patterns;
 using System;
 using System.Collections;
+using UniKit.Attributes;
+using UniKit.Patterns;
 using UniRx;
 using UnityEngine;
 
 namespace UniKit
 {
-    public interface ITurns
+    public interface IReadonlyTurns
     {
-        IReactiveProperty<float> TurnsPerSecond { get; }
-        IReadOnlyReactiveProperty<int> TurnCount { get; }
+        IReadOnlyReactiveProperty<float> TurnsPerSecond { get; }
+        IReadOnlyReactiveProperty<int> TurnNumber { get; }
         TimeSpan TurnLength { get; }
+        bool IsActive { get; }
+    }
+    public interface ITurns : IReadonlyTurns
+    {
+        new IReactiveProperty<float> TurnsPerSecond { get; }
         TokenMachine Active { get; }
         void StartTurns();
+        void StopTurns();
         IDisposable Pause() => Active.GetToken();
     }
     [Serializable]
@@ -24,17 +30,23 @@ namespace UniKit
 
         private readonly ReactiveProperty<int> turnCount = new ReactiveProperty<int>(0);
 
-        public IReadOnlyReactiveProperty<int> TurnCount => turnCount;
+        public IReadOnlyReactiveProperty<int> TurnNumber => turnCount;
 
         public IReactiveProperty<float> TurnsPerSecond => turnsPerSecond;
 
         public TimeSpan TurnLength { get; private set; }
 
-        public TokenMachine Active => new TokenMachine(null, null);
+        public TokenMachine Active => new TokenMachine();
 
+        IReadOnlyReactiveProperty<float> IReadonlyTurns.TurnsPerSecond => TurnsPerSecond;
+
+        public bool IsActive => !Active.Locked;
+
+        IDisposable turns;
         public void StartTurns()
         {
-            MainThreadDispatcher.StartCoroutine(CallTurn());
+            if (turns == null)
+                turns = Observable.FromCoroutine(CallTurn).Subscribe();
         }
 
         private IEnumerator CallTurn()
@@ -44,7 +56,16 @@ namespace UniKit
 
             yield return new WaitForSeconds((float)TurnLength.TotalSeconds);
 
+            if (IsActive)
+                turnCount.Value++;
+
             yield return CallTurn();
+        }
+
+        public void StopTurns()
+        {
+            turns?.Dispose();
+            turns = null;
         }
     }
 }
