@@ -42,20 +42,18 @@ namespace UniKit.Types
         }
 
         public void Add(KeyValuePair<T1, T2> item)
-        {
-            ((ICollection<KeyValuePair<T1, T2>>)_forward).Add(item);
-        }
+            => Add(item.Key, item.Value);
         public void Add(T1 key, T2 value)
         {
-            ((IDictionary<T1, T2>)_forward).Add(key, value);
+            _forward.Add(key, value);
+            _backwards.Add(value, key);
         }
         public void Add(KeyValuePair<T2, T1> item)
-        {
-            ((ICollection<KeyValuePair<T2, T1>>)_backwards).Add(item);
-        }
+            => Add(item.Key, item.Value);
         public void Add(T2 key, T1 value)
         {
-            ((IDictionary<T2, T1>)_backwards).Add(key, value);
+            _backwards.Add(key, value);
+            _forward.Add(value, key);
         }
 
         public bool Remove(T1 key)
