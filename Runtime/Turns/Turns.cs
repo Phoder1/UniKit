@@ -9,14 +9,14 @@ namespace UniKit
 {
     public interface IReadonlyTurns
     {
-        IReadOnlyReactiveProperty<float> TurnsPerSecond { get; }
+        IReadOnlyReactiveProperty<float> SecondsPerTurn { get; }
         IReadOnlyReactiveProperty<int> TurnNumber { get; }
         TimeSpan TurnLength { get; }
         bool IsActive { get; }
     }
     public interface ITurns : IReadonlyTurns
     {
-        new IReactiveProperty<float> TurnsPerSecond { get; }
+        new IReactiveProperty<float> SecondsPerTurn { get; }
         TokenMachine Active { get; }
         void StartTurns();
         void StopTurns();
@@ -26,19 +26,19 @@ namespace UniKit
     public class Turns : ITurns
     {
         [SerializeField, Inline(true)]
-        private ReactiveProperty<float> turnsPerSecond = new ReactiveProperty<float>(1);
+        private ReactiveProperty<float> secondsPerTurn = new ReactiveProperty<float>(1);
 
         private readonly ReactiveProperty<int> turnCount = new ReactiveProperty<int>(0);
 
         public IReadOnlyReactiveProperty<int> TurnNumber => turnCount;
 
-        public IReactiveProperty<float> TurnsPerSecond => turnsPerSecond;
+        public IReactiveProperty<float> SecondsPerTurn => secondsPerTurn;
 
         public TimeSpan TurnLength { get; private set; }
 
         public TokenMachine Active => new TokenMachine();
 
-        IReadOnlyReactiveProperty<float> IReadonlyTurns.TurnsPerSecond => TurnsPerSecond;
+        IReadOnlyReactiveProperty<float> IReadonlyTurns.SecondsPerTurn => SecondsPerTurn;
 
         public bool IsActive => !Active.Locked;
 
@@ -51,7 +51,7 @@ namespace UniKit
 
         private IEnumerator CallTurn()
         {
-            TurnLength = TimeSpan.FromSeconds(1 / TurnsPerSecond.Value);
+            TurnLength = TimeSpan.FromSeconds(SecondsPerTurn.Value);
             turnCount.Value++;
 
             yield return new WaitForSeconds((float)TurnLength.TotalSeconds);
