@@ -21,8 +21,11 @@ namespace UniKit.Zenject
         }
 
         public Result IsValid()
-            => typeof(TInstance)
-            .IsSerializable
-            .Assert($"{typeof(TInstance).Name} is not serializable");
+        {
+            var type = typeof(TInstance);
+
+            return (type.IsSerializable || typeof(Object).IsAssignableFrom(type))
+                .Assert($"{typeof(TInstance).Name} is not serializable");
+        }
     }
 }

@@ -127,11 +127,24 @@ namespace UniKit
             IEnumerable<Vector2Int> ValidUndiscoveredNeighbors(Vector2Int tilePos)
             {
                 foreach (var neighbor in tilePos.GetStraightNeighbors())
-                    if (!tiles.ContainsKey(neighbor) && settings.IsTraversable.Invoke(neighbor))
-                        yield return neighbor;
+                {
+                    if (undiscoveredTiles.FindIndex((x) => x.Key == neighbor) != -1)
+                        continue;
+
+                    if (tiles.ContainsKey(neighbor))
+                        continue;
+
+                    if (!settings.IsTraversable.Invoke(neighbor))
+                        continue;
+
+                    yield return neighbor;
+                }
 
                 foreach (var neighbor in tilePos.GetDiagonalNeighbors())
                 {
+                    if (undiscoveredTiles.FindIndex((x) => x.Key == neighbor) != -1)
+                        continue;
+
                     if (tiles.ContainsKey(neighbor))
                         continue;
 
