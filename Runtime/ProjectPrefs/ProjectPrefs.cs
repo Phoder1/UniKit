@@ -33,7 +33,6 @@ namespace UniKit.Project
 #endif
                 return prefs;
             }
-            private set => prefs = value;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -42,12 +41,12 @@ namespace UniKit.Project
             if (Application.isPlaying)
                 LoadSettings();
             else
-                Prefs = GetOrCreateSettings();
+                prefs = GetOrCreateSettings();
         }
 
         public static void LoadSettings()
         {
-            Prefs = Resources.Load(PPResourcesPath) as ProjectPrefs;
+            prefs = Resources.Load(PPResourcesPath) as ProjectPrefs;
         }
 #if UNITY_EDITOR
         private static ProjectPrefs GetOrCreateSettings()
@@ -55,7 +54,7 @@ namespace UniKit.Project
             if (Application.isPlaying)
                 return prefs;
 
-            ProjectPrefs settings = AssetDatabase.LoadAssetAtPath<ProjectPrefs>(PPAssetPath);
+            ProjectPrefs settings = AssetDatabase.LoadAssetAtPath<ProjectPrefs>(PPAssetPath); 
 
             if (settings == null)
                 settings = CreateSettings(settings);

@@ -4,7 +4,7 @@ using UniKit.Types;
 using UnityEngine;
 using Zenject;
 
-namespace UniKit.Core.Zenject
+namespace UniKit.Zenject
 {
     public class GenericInstallerByInstance<TBind, TInstance> : MonoInstaller, IValidateable
         where TInstance : class, TBind

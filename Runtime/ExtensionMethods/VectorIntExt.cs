@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace UniKit
 {
@@ -14,5 +16,21 @@ namespace UniKit
             else
                 return xDistance + yDistance;
         }
+        public static IEnumerable<Vector2Int> GetStraightNeighbors(this Vector2Int tilePos)
+        {
+            yield return tilePos + Vector2Int.up;
+            yield return tilePos + Vector2Int.down;
+            yield return tilePos + Vector2Int.left;
+            yield return tilePos + Vector2Int.right;
+        }
+        public static IEnumerable<Vector2Int> GetDiagonalNeighbors(this Vector2Int tilePos)
+        {
+            yield return tilePos + Vector2Int.one;
+            yield return tilePos - Vector2Int.one;
+            yield return tilePos + new Vector2Int(1, -1);
+            yield return tilePos + new Vector2Int(-1, 1);
+        }
+        public static bool IsNeighborOf(this Vector2Int tile, Vector2Int possibleNeighbor, bool includeDiagonal)
+            => tile.TileSteps(possibleNeighbor, includeDiagonal) <= 1;
     }
 }
