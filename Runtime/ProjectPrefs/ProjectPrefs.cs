@@ -93,6 +93,16 @@ namespace UniKit.Project
         /// </summary>
         public static string GetString(string key)
             => Array.Find(Prefs.prefsSettings.stringProperties, (x) => x.Name == key).Value;
+        /// <summary>
+        /// Returns the value corresponding to key in the preference file if it exists.
+        /// </summary>
+        public static GameObject GetGameObject(string key)
+            => Array.Find(Prefs.prefsSettings.gameObjectProperties, (x) => x.Name == key).Value;
+        /// <summary>
+        /// Returns the value corresponding to key in the preference file if it exists.
+        /// </summary>
+        public static Sprite GetSprite(string key)
+            => Array.Find(Prefs.prefsSettings.spriteProperties, (x) => x.Name == key).Value;
 
         /// <summary>
         /// Returns true if the given key exists in PlayerPrefs, otherwise returns false.
@@ -116,6 +126,11 @@ namespace UniKit.Project
             public PrefsProperty<string>[] stringProperties;
             [SerializeField]
             public PrefsProperty<float>[] floatProperties;
+            [SerializeField]
+            public PrefsProperty<GameObject>[] gameObjectProperties;
+            [SerializeField]
+            public PrefsProperty<Sprite>[] spriteProperties;
+
 
             public IEnumerable<IPrefsProperty> AllProperties
             {
@@ -126,6 +141,10 @@ namespace UniKit.Project
                     foreach (var prop in stringProperties)
                         yield return prop;
                     foreach (var prop in floatProperties)
+                        yield return prop;
+                    foreach (var prop in gameObjectProperties)
+                        yield return prop;
+                    foreach (var prop in spriteProperties)
                         yield return prop;
                 }
             }

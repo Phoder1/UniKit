@@ -33,7 +33,7 @@ namespace UniKit.Editor.Project
             var property = projectPrefSettings.FindProperty("prefsSettings");
             property.FlatProperty();
 
-            property.serializedObject.ApplyModifiedProperties();
+            projectPrefSettings.ApplyModifiedProperties();
         }
 
         // Register the SettingsProvider
