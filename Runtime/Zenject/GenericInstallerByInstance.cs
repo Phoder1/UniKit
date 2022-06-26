@@ -1,3 +1,4 @@
+using UniKit.Attributes;
 using UniKit.QA;
 using UniKit.Types;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace UniKit.Core.Zenject
         where TInstance : class, TBind
         where TBind : class
     {
-        [SerializeField]
+        [SerializeField, Inline]
         private TInstance _instance;
 
         public override void InstallBindings()

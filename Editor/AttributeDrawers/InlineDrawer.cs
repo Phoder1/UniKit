@@ -15,7 +15,6 @@ namespace UniKit.Editor
                 property.FlatProperty(label);
             else
                 property.FlatProperty();
-
         }
     }
 }

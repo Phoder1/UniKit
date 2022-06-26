@@ -10,6 +10,12 @@ public static class EditorExtensionMethods
 {
     public static void FlatProperty(this SerializedProperty property, GUIContent guiContent = null)
     {
+        if (!property.hasVisibleChildren)
+        {
+            EditorGUILayout.PropertyField(property);
+            return;
+        }
+
         var childs = property.GetChilds();
 
         int childCount = 0;
