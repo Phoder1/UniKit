@@ -40,8 +40,10 @@ namespace UniKit.Project
         {
             if (Application.isPlaying)
                 LoadSettings();
+#if UNITY_EDITOR
             else
                 prefs = GetOrCreateSettings();
+#endif
         }
 
         public static void LoadSettings()

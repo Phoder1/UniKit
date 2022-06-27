@@ -17,6 +17,11 @@ namespace UniKit.Zenject
         }
 
         private Random CreateRandom()
-            => new Random(HashCode.Combine(seed, DateTime.Now));
+        {
+            if (randomizeSeed)
+                return new Random(HashCode.Combine(seed, DateTime.Now));
+            else
+                return new Random(seed.GetHashCode());
+        }
     }
 }

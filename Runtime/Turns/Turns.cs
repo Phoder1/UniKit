@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UniKit.Attributes;
 using UniKit.Patterns;
 using UniRx;
 using UnityEngine;
@@ -58,10 +57,29 @@ namespace UniKit
             secondsPerTurn = new ReactiveProperty<float>(minTurnSpeed);
         }
 
+        IDisposable pauseToken = null;
+        private void InputListen(Unit obj)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (pauseToken == null)
+                {
+                    pauseToken = Disabled.GetToken();
+                }
+                else
+                {
+                    pauseToken.Dispose();
+                    pauseToken = null;
+                }
+            }
+        }
+
         public void StartTurns()
         {
             if (turns == null)
                 turns = Observable.FromCoroutine(CallTurn).Subscribe();
+
+            MainThreadDispatcher.UpdateAsObservable().Subscribe(InputListen);
         }
 
         private IEnumerator CallTurn()
@@ -73,8 +91,10 @@ namespace UniKit
 
                 if (IsActive)
                     turnCount.Value++;
+                float turnLengthInSeconds = Mathf.Max(0.05f, (float)TurnLength.TotalSeconds);
 
-                yield return new WaitForSeconds((float)TurnLength.TotalSeconds);
+                if (turnLengthInSeconds > 0f)
+                    yield return new WaitForSeconds(turnLengthInSeconds);
 
                 turnEnded.OnNext(turnCount.Value);
             }
