@@ -29,5 +29,17 @@ namespace UniKit
             foreach (var item in collection)
                 yield return converter(item);
         }
+        public static T GetMin<T>(this IEnumerable<T> values, Func<T, decimal> value, Comparison<T> equalComparer = null)
+        {
+            var allValues = new List<T>(values);
+            allValues.Sort((a, b) => value.Invoke(a).CompareTo(value.Invoke(b)));
+            if(equalComparer != null)
+            {
+                decimal minValue = value.Invoke(allValues[0]);
+                allValues.RemoveAll((x) => value.Invoke(x) > minValue);
+                allValues.Sort(equalComparer);
+            }
+            return allValues[0];
+        }
     }
 }
