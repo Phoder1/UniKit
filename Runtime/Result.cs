@@ -52,6 +52,8 @@ namespace UniKit.Types
             => result.Successful;
         public static implicit operator T(Result<T> result)
             => result.Value;
+        public static implicit operator Result<T>(T result)
+            => Success(result);
         public static implicit operator Result(Result<T> result)
             => new Result(result.ErrorMessage);
     }
@@ -200,6 +202,13 @@ namespace UniKit.Types
                 return Result<T>.Success(value.Invoke());
             else
                 return Result<T>.Failed(result.ErrorMessage);
+        }
+        public static Result<TOut> WithValue<TIn, TOut>(this Result<TIn> result, Func<TOut> value)
+        {
+            if (result)
+                return Result<TOut>.Success(value.Invoke());
+            else
+                return Result<TOut>.Failed(result.ErrorMessage);
         }
         public static IEnumerable<T> Values<T>(this IEnumerable<Result<T>> results)
         {

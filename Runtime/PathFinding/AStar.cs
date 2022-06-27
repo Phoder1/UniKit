@@ -64,7 +64,7 @@ namespace UniKit
                     return CalculateResult(lastTile);
 
                 if (DiscoverTile(bestTile))
-                    return CalculateResult(to);
+                    return CalculateResult(bestTile.Key);
 
                 lastTile = bestTile.Key;
             }
@@ -90,17 +90,25 @@ namespace UniKit
                 tiles.Add(tile.Key, tile.Value);
                 undiscoveredTiles.Remove(tile);
 
-                foreach (var neighbor in ValidUndiscoveredNeighbors(tile.Key))
-                {
-                    if (neighbor == to)
-                        return true;
+                if (ReachedTarget(tile.Key))
+                    return true;
 
+                foreach (var neighbor in ValidUndiscoveredNeighbors(tile.Key))
                     AddNewUndiscoveredTileInfo(neighbor, tile.Key);
-                }
 
                 return false;
             }
 
+            bool ReachedTarget(Vector2Int tile)
+            {
+                if (tile == to)
+                    return true;
+
+                if (settings.HasReachedTarget != null && settings.HasReachedTarget.Invoke(to, tile, settings))
+                    return true;
+
+                return false;
+            }
             GridPathfindResult CalculateResult(Vector2Int endTile)
                 => new GridPathfindResult(endTile == to, CalculatePath(endTile), from, to, settings);
 
@@ -113,6 +121,7 @@ namespace UniKit
                     steps.Add(currentTile);
                     currentTile = tiles[currentTile].Parent;
                 }
+                steps.Reverse();
                 return steps;
             }
 

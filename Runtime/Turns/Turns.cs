@@ -11,38 +11,53 @@ namespace UniKit
     {
         IReadOnlyReactiveProperty<float> SecondsPerTurn { get; }
         IReadOnlyReactiveProperty<int> TurnNumber { get; }
+        IObservable<int> TurnEnded { get; }
         TimeSpan TurnLength { get; }
         bool IsActive { get; }
     }
     public interface ITurns : IReadonlyTurns
     {
         new IReactiveProperty<float> SecondsPerTurn { get; }
-        TokenMachine Active { get; }
+        TokenMachine Disabled { get; }
         void StartTurns();
         void StopTurns();
-        IDisposable Pause() => Active.GetToken();
+        IDisposable Pause() => Disabled.GetToken();
     }
     [Serializable]
     public class Turns : ITurns
     {
-        [SerializeField, Inline(true)]
-        private ReactiveProperty<float> secondsPerTurn = new ReactiveProperty<float>(1);
+        [SerializeField, Tooltip("In seconds per turn")]
+        private float minTurnSpeed = 2;
+        [SerializeField, Tooltip("In seconds per turn")]
+        private float maxTurnSpeed = 0.1f;
+        [SerializeField]
+        private int maxSpeedTurnNumber = 40;
+
+        private ReactiveProperty<float> secondsPerTurn;
 
         private readonly ReactiveProperty<int> turnCount = new ReactiveProperty<int>(0);
-
+        private readonly Subject<int> turnEnded = new Subject<int>();
         public IReadOnlyReactiveProperty<int> TurnNumber => turnCount;
 
         public IReactiveProperty<float> SecondsPerTurn => secondsPerTurn;
 
         public TimeSpan TurnLength { get; private set; }
 
-        public TokenMachine Active => new TokenMachine();
+        public TokenMachine Disabled => new TokenMachine();
 
         IReadOnlyReactiveProperty<float> IReadonlyTurns.SecondsPerTurn => SecondsPerTurn;
 
-        public bool IsActive => !Active.Locked;
+        public bool IsActive => !Disabled.Locked;
+
+        public IObservable<int> TurnEnded => turnEnded;
 
         IDisposable turns;
+
+        public Turns()
+        {
+            secondsPerTurn = new ReactiveProperty<float>(minTurnSpeed);
+        }
+
         public void StartTurns()
         {
             if (turns == null)
@@ -51,15 +66,18 @@ namespace UniKit
 
         private IEnumerator CallTurn()
         {
-            TurnLength = TimeSpan.FromSeconds(SecondsPerTurn.Value);
-            turnCount.Value++;
+            while (true)
+            {
+                SecondsPerTurn.Value = Mathf.Lerp(minTurnSpeed, maxTurnSpeed, (float)turnCount.Value / (float)maxSpeedTurnNumber);
+                TurnLength = TimeSpan.FromSeconds(secondsPerTurn.Value);
 
-            yield return new WaitForSeconds((float)TurnLength.TotalSeconds);
+                if (IsActive)
+                    turnCount.Value++;
 
-            if (IsActive)
-                turnCount.Value++;
+                yield return new WaitForSeconds((float)TurnLength.TotalSeconds);
 
-            yield return CallTurn();
+                turnEnded.OnNext(turnCount.Value);
+            }
         }
 
         public void StopTurns()
