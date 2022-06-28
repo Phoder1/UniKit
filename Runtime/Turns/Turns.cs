@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UniKit
 {
-    public interface IReadonlyTurns
+    public interface IReadonlyTimedTurns
     {
         IReadOnlyReactiveProperty<float> SecondsPerTurn { get; }
         IReadOnlyReactiveProperty<int> TurnNumber { get; }
@@ -14,7 +14,7 @@ namespace UniKit
         TimeSpan TurnLength { get; }
         bool IsActive { get; }
     }
-    public interface ITurns : IReadonlyTurns
+    public interface ITimedTurns : IReadonlyTimedTurns
     {
         new IReactiveProperty<float> SecondsPerTurn { get; }
         TokenMachine Disabled { get; }
@@ -23,7 +23,7 @@ namespace UniKit
         IDisposable Pause() => Disabled.GetToken();
     }
     [Serializable]
-    public class Turns : ITurns
+    public class Turns : ITimedTurns
     {
         [SerializeField, Tooltip("In seconds per turn")]
         private float minTurnSpeed = 2;
@@ -44,7 +44,7 @@ namespace UniKit
 
         public TokenMachine Disabled => new TokenMachine();
 
-        IReadOnlyReactiveProperty<float> IReadonlyTurns.SecondsPerTurn => SecondsPerTurn;
+        IReadOnlyReactiveProperty<float> IReadonlyTimedTurns.SecondsPerTurn => SecondsPerTurn;
 
         public bool IsActive => !Disabled.Locked;
 

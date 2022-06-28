@@ -2,6 +2,6 @@
 
 namespace UniKit.SpaceEmpires.Installers
 {
-    public class TurnsInstaller : GenericInstallerByInstance<ITurns, Turns> { }
+    public class TurnsInstaller : GenericInstallerByInstance<ITimedTurns, Turns> { }
 
 }
