@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEditor.Compilation;
 
 namespace UniKit.Reflection
 {
@@ -260,27 +259,6 @@ namespace UniKit.Reflection
             }
             member = null;
             return false;
-        }
-        public static bool HasReferenceTo(this UnityEditor.Compilation.Assembly assembly, UnityEditor.Compilation.Assembly referencedAssembly)
-            => assembly.HasReferenceTo(referencedAssembly.name);
-        public static bool HasReferenceTo(this UnityEditor.Compilation.Assembly assembly, System.Reflection.Assembly referencedAssembly)
-            => assembly.HasReferenceTo(referencedAssembly.FullName);
-        public static bool HasReferenceTo(this UnityEditor.Compilation.Assembly assembly, string referencedAssembly)
-            => Array.Exists(assembly.assemblyReferences, (x) => referencedAssembly.StartsWith(x.name));
-
-        public static List<UnityEditor.Compilation.Assembly> GetAllThatMightImplement(this Type type)
-        {
-            var assembly = type.Assembly;
-            var allAssemblies = CompilationPipeline.GetAssemblies(AssembliesType.Player);
-            return allAssemblies.Where((x) => x.HasReferenceTo(assembly) || assembly.FullName.StartsWith(x.name));
-        }
-        public static IEnumerable<System.Reflection.Assembly> GetSystemAssemblies(this IEnumerable<UnityEditor.Compilation.Assembly> assemblies)
-        {
-            var allSystemAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (var assembly in allSystemAssemblies)
-                if (assemblies.Any((x) => assembly.FullName.StartsWith(x.name)))
-                    yield return assembly;
         }
         public static bool IsAssignableFromGeneric(this Type baseType, Type extendType)
         {

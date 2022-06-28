@@ -15,48 +15,41 @@ namespace UniKit
         where TChild : GenericProjectSettings<TChild>
     {
         private static string ResourcePath => typeof(TChild).Name;
-        private static string AssetPath => Path.ChangeExtension(Path.Combine("Assets/Resources", ResourcePath), "asset");
-        public virtual string MenuPath => ResourcePath;
+        private static string AssetPath 
+            => Path.ChangeExtension(Path.Combine("Assets/Resources", ResourcePath), "asset");
+        public virtual string MenuPath 
+            => $"{Application.productName.ToDisplayName()}/{typeof(TChild).Name.ToDisplayName()}";
 
-        private static GenericProjectSettings<TChild> data;
-        public static GenericProjectSettings<TChild> Data
+        private static TChild data;
+        public static TChild Data
         {
             get
             {
-#if UNITY_EDITOR
                 if (data == null)
                 {
                     if (Application.isPlaying)
                         LoadSettings();
+#if UNITY_EDITOR
                     else
                         data = GetOrCreateSettings();
-                }
 #endif
+                }
                 return data;
             }
             private set => data = value;
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void LoadPrefs()
-        {
-            if (Application.isPlaying)
-                LoadSettings();
-            else
-                Data = GetOrCreateSettings();
-        }
-
         public static void LoadSettings()
         {
-            Data = Resources.Load(ResourcePath) as GenericProjectSettings<TChild>;
+            Data = Resources.Load(ResourcePath) as TChild;
         }
 #if UNITY_EDITOR
-        private static GenericProjectSettings<TChild> GetOrCreateSettings()
+        private static TChild GetOrCreateSettings()
         {
             if (Application.isPlaying)
                 return data;
 
-            GenericProjectSettings<TChild> settings = AssetDatabase.LoadAssetAtPath<GenericProjectSettings<TChild>>(AssetPath);
+            TChild settings = AssetDatabase.LoadAssetAtPath<TChild>(AssetPath);
 
             if (settings == null)
                 settings = CreateSettings(settings);
@@ -64,7 +57,7 @@ namespace UniKit
             return settings;
         }
 
-        private static GenericProjectSettings<TChild> CreateSettings(GenericProjectSettings<TChild> settings)
+        private static TChild CreateSettings(TChild settings)
         {
             settings = CreateInstance<TChild>();
             AssetDatabase.CreateAsset(settings, AssetPath);

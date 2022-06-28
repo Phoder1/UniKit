@@ -1,3 +1,6 @@
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector.Editor;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +14,8 @@ namespace UniKit.Editor
 {
     public class GenericProjectSettingsProvider : MonoBehaviour
     {
-        internal static IEnumerable<Type> settingsTypes = GetGenericSettingsTypes();
+        
+        internal static IReadOnlyList<Type> settingsTypes = typeof(GenericProjectSettings<>).GetAllThatImplement().ToArray();
         internal static BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         [SettingsProviderGroup]
@@ -24,11 +28,17 @@ namespace UniKit.Editor
                 if (!settingsType.TryFindProperty("Data", bindingFlags, out var property))
                     continue;
 
-                var serielizedObject = LoadSerializedObject();
-                if (serielizedObject == null || serielizedObject.targetObject == null)
+                var editor = LoadEditor(out var value); 
+                if (editor == null || editor.target == null)
                     continue;
 
-                var provider = new SettingsProvider($"Project/{Application.productName.ToDisplayName()}/{settingsType.Name.ToDisplayName()}", SettingsScope.Project)
+                string menuPath;
+                if (settingsType.TryFindProperty("MenuPath", out var menuPathProp))
+                    menuPath = (string)menuPathProp.GetValue(value);
+                else
+                    menuPath = DefaultMenuPath(settingsType);
+
+                var provider = new SettingsProvider($"Project/{menuPath}", SettingsScope.Project)
                 {
                     guiHandler = (x) => Gui(settingsType, x)
                 };
@@ -36,57 +46,30 @@ namespace UniKit.Editor
                 providers.Add(provider);
                 void Gui(Type type, string obj)
                 {
-                    if (serielizedObject == null || serielizedObject.targetObject == null)
+                    if (editor == null || editor.target == null)
                     {
-                        serielizedObject = LoadSerializedObject();
-                        if (serielizedObject == null || serielizedObject.targetObject == null)
+                        editor = LoadEditor(out value);
+                        if (editor == null || editor.target == null)
                             return;
                     }
-                    var iterator = serielizedObject.GetIterator();
-                    GUI.enabled = false;
-                    //Draw first with gui disabled because it's always the Monoscript field
-                    iterator.NextVisible(true);
-                    EditorGUILayout.PropertyField(iterator);
-                    GUI.enabled = true;
-
-                    bool enterChildren = true;
-                    while (iterator.NextVisible(enterChildren))
-                    {
-                        enterChildren = false;
-                        EditorGUILayout.PropertyField(iterator);
-                    }
-
-                    serielizedObject.ApplyModifiedProperties();
+                    //Todo: support custom inspectors
+                    editor.DrawDefaultInspector();
                 }
 
-                SerializedObject LoadSerializedObject()
+                UnityEditor.Editor LoadEditor(out Object value)
                 {
-                    var value = property.GetValue(null) as Object;
+                    value = property.GetValue(null) as Object;
                     if (value == null)
                         return null;
 
-                    return new SerializedObject(value);
+                    var customEditor = value.GetCustomEditor();
+                    return UnityEditor.Editor.CreateEditor(value, customEditor);
                 }
             }
 
             return providers.ToArray();
         }
-
-        private static IEnumerable<Type> GetGenericSettingsTypes()
-        {
-            var type = typeof(GenericProjectSettings<>);
-            var assemblies = type
-                .GetAllThatMightImplement()
-                .GetSystemAssemblies()
-                .ToList();
-
-            assemblies.RemoveAll((x) => x.FullName.StartsWith("Assembly-CSharp-firstpass"));
-
-            if (assemblies == null || assemblies.Count == 0)
-                return null;
-
-            var allTypes = assemblies.SelectMany((x) => x.GetTypes()).ToArray();
-            return allTypes.Where((x) => x != null && x != type && type.IsAssignableFromGeneric(x));
-        }
+        public static string DefaultMenuPath(Type type)
+            => $"{Application.productName.ToDisplayName()}/{type.Name.ToDisplayName()}";
     }
 }
