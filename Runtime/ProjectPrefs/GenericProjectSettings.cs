@@ -1,83 +1,80 @@
-//using UnityEngine;
-//using System.Collections.Generic;
-//using System;
-//using System.IO;
-//using Object = UnityEngine.Object;
+using UnityEngine;
+using System.Collections.Generic;
+using System;
+using System.IO;
+using Object = UnityEngine.Object;
 
 
-//#if UNITY_EDITOR
-//using UnityEditor;
-//#endif
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
-//namespace UniKit
-//{
-//    public abstract class GenericProjectSettings<T, TChild> : ScriptableObject
-//        where TChild : GenericProjectSettings<T, TChild>
-//        where T : struct
-//    {
-//        [SerializeField]
-//        private T settings;
+namespace UniKit
+{
+    public abstract class GenericProjectSettings<TChild> : ScriptableObject
+        where TChild : GenericProjectSettings<TChild>
+    {
+        private static string ResourcePath => typeof(TChild).Name;
+        private static string AssetPath => Path.ChangeExtension(Path.Combine("Assets/Resources", ResourcePath), "asset");
+        public virtual string MenuPath => ResourcePath;
 
-//        private static string ResourcePath => nameof(TChild);
-//        private static string AssetPath => Path.ChangeExtension(Path.Combine("Assets/Resources", ResourcePath), "asset");
+        private static GenericProjectSettings<TChild> data;
+        public static GenericProjectSettings<TChild> Data
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (data == null)
+                {
+                    if (Application.isPlaying)
+                        LoadSettings();
+                    else
+                        data = GetOrCreateSettings();
+                }
+#endif
+                return data;
+            }
+            private set => data = value;
+        }
 
-//        private static GenericProjectSettings<T, TChild> data;
-//        public static GenericProjectSettings<T, TChild> Data
-//        {
-//            get
-//            {
-//#if UNITY_EDITOR
-//                if (data == null)
-//                {
-//                    if (Application.isPlaying)
-//                        LoadSettings();
-//                    else
-//                        data = GetOrCreateSettings();
-//                }
-//#endif
-//                return data;
-//            }
-//            private set => data = value;
-//        }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void LoadPrefs()
+        {
+            if (Application.isPlaying)
+                LoadSettings();
+            else
+                Data = GetOrCreateSettings();
+        }
 
-//        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-//        private static void LoadPrefs()
-//        {
-//            if (Application.isPlaying)
-//                LoadSettings();
-//            else
-//                Data = GetOrCreateSettings();
-//        }
+        public static void LoadSettings()
+        {
+            Data = Resources.Load(ResourcePath) as GenericProjectSettings<TChild>;
+        }
+#if UNITY_EDITOR
+        private static GenericProjectSettings<TChild> GetOrCreateSettings()
+        {
+            if (Application.isPlaying)
+                return data;
 
-//        public static void LoadSettings()
-//        {
-//            Data = Resources.Load(ResourcePath) as GenericProjectSettings<T, TChild>;
-//        }
-//#if UNITY_EDITOR
-//        private static GenericProjectSettings<T, TChild> GetOrCreateSettings()
-//        {
-//            if (Application.isPlaying)
-//                return data;
+            GenericProjectSettings<TChild> settings = AssetDatabase.LoadAssetAtPath<GenericProjectSettings<TChild>>(AssetPath);
 
-//            GenericProjectSettings<T, TChild> settings = AssetDatabase.LoadAssetAtPath<GenericProjectSettings<T, TChild>>(AssetPath);
+            if (settings == null)
+                settings = CreateSettings(settings);
 
-//            if (settings == null)
-//                settings = CreateSettings(settings);
+            return settings;
+        }
 
-//            return settings;
-//        }
+        private static GenericProjectSettings<TChild> CreateSettings(GenericProjectSettings<TChild> settings)
+        {
+            settings = CreateInstance<TChild>();
+            AssetDatabase.CreateAsset(settings, AssetPath);
+            AssetDatabase.SaveAssets();
 
-//        private static GenericProjectSettings<T, TChild> CreateSettings(GenericProjectSettings<T, TChild> settings)
-//        {
-//            settings = CreateInstance<GenericProjectSettings<T, TChild>>();
-//            AssetDatabase.CreateAsset(settings, AssetPath);
-//            AssetDatabase.SaveAssets();
-
-//            List<Object> preloaded = new List<Object>(PlayerSettings.GetPreloadedAssets());
-//            preloaded.Add(settings);
-//            PlayerSettings.SetPreloadedAssets(preloaded.ToArray());
-//            return settings;
-//        }
-//#endif
-//    }
-//}
+            List<Object> preloaded = new List<Object>(PlayerSettings.GetPreloadedAssets());
+            preloaded.Add(settings);
+            PlayerSettings.SetPreloadedAssets(preloaded.ToArray());
+            return settings;
+        }
+#endif
+    }
+}

@@ -1,99 +1,92 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Reflection;
-//using UnityEditor;
-//using UnityEngine;
-//using Object = UnityEngine.Object;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UniKit.Reflection;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
-//namespace UniKit.Editor
-//{
-//    public class GenericProjectSettingsProvider : MonoBehaviour
-//    {
-//        [SettingsProviderGroup]
-//        internal static SettingsProvider[] FetchGenericSettingsProviderList()
-//        {
-//            BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.DeclaredOnly | BindingFlags.GetProperty;
-//            List<SettingsProvider> providers = new List<SettingsProvider>();
-//            foreach (Type settingsType in GetGenericSettingsTypes())
-//            {
-//                var provider = new SettingsProvider($"Project/{settingsType.Name.ToDisplayName()}", SettingsScope.Project)
-//                {
-//                    guiHandler = Gui
-//                };
+namespace UniKit.Editor
+{
+    public class GenericProjectSettingsProvider : MonoBehaviour
+    {
+        internal static IEnumerable<Type> settingsTypes = GetGenericSettingsTypes();
+        internal static BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-//                providers.Add(provider);
-//                void Gui(string obj)
-//                {
-//                    var serielizedObject = new SerializedObject(settingsType.GetProperty("Data", bindingFlags).GetValue(null) as Object);
-//                    var property = serielizedObject.FindProperty("settings");
+        [SettingsProviderGroup]
+        internal static SettingsProvider[] FetchGenericSettingsProviderList()
+        {
+            List<SettingsProvider> providers = new List<SettingsProvider>();
 
-//                    property.FlatProperty();
+            foreach (Type settingsType in settingsTypes)
+            {
+                if (!settingsType.TryFindProperty("Data", bindingFlags, out var property))
+                    continue;
 
-//                    serielizedObject.ApplyModifiedProperties();
-//                }   
-//            }
+                var serielizedObject = LoadSerializedObject();
+                if (serielizedObject == null || serielizedObject.targetObject == null)
+                    continue;
 
-//            return providers.ToArray();
-//        }
+                var provider = new SettingsProvider($"Project/{Application.productName.ToDisplayName()}/{settingsType.Name.ToDisplayName()}", SettingsScope.Project)
+                {
+                    guiHandler = (x) => Gui(settingsType, x)
+                };
 
+                providers.Add(provider);
+                void Gui(Type type, string obj)
+                {
+                    if (serielizedObject == null || serielizedObject.targetObject == null)
+                    {
+                        serielizedObject = LoadSerializedObject();
+                        if (serielizedObject == null || serielizedObject.targetObject == null)
+                            return;
+                    }
+                    var iterator = serielizedObject.GetIterator();
+                    GUI.enabled = false;
+                    //Draw first with gui disabled because it's always the Monoscript field
+                    iterator.NextVisible(true);
+                    EditorGUILayout.PropertyField(iterator);
+                    GUI.enabled = true;
 
-//        private static IEnumerable<Type> GetGenericSettingsTypes()
-//        {
-//            var settingsBaseType = typeof(GenericProjectSettings<,>);
-//            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    bool enterChildren = true;
+                    while (iterator.NextVisible(enterChildren))
+                    {
+                        enterChildren = false;
+                        EditorGUILayout.PropertyField(iterator);
+                    }
 
-//            foreach (var assembly in assemblies)
-//                if (UserAssembly(assembly))
-//                    foreach (var type in assembly.GetTypes())
-//                        if (type != settingsBaseType && settingsBaseType.IsAssignableFrom(type))
-//                            yield return type;
+                    serielizedObject.ApplyModifiedProperties();
+                }
 
-//            bool UserAssembly(Assembly assembly)
-//            {
-//                if (assembly.FullName.StartsWith("UnityEngine"))
-//                    return false;
+                SerializedObject LoadSerializedObject()
+                {
+                    var value = property.GetValue(null) as Object;
+                    if (value == null)
+                        return null;
 
-//                if (assembly.FullName.StartsWith("UnityEditor"))
-//                    return false;
+                    return new SerializedObject(value);
+                }
+            }
 
-//                if (assembly.FullName.StartsWith("System"))
-//                    return false;
+            return providers.ToArray();
+        }
 
-//                if (assembly.FullName.StartsWith("Mono."))
-//                    return false;
+        private static IEnumerable<Type> GetGenericSettingsTypes()
+        {
+            var type = typeof(GenericProjectSettings<>);
+            var assemblies = type
+                .GetAllThatMightImplement()
+                .GetSystemAssemblies()
+                .ToList();
 
-//                if (assembly.FullName.StartsWith("netstandard"))
-//                    return false;
+            assemblies.RemoveAll((x) => x.FullName.StartsWith("Assembly-CSharp-firstpass"));
 
-//                if (assembly.FullName.StartsWith("Assembly-CSharp"))
-//                    return false;
+            if (assemblies == null || assemblies.Count == 0)
+                return null;
 
-//                if (assembly.FullName.StartsWith("Unity."))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("Zenject"))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("Sirenix"))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("UniRx"))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("DemiEditor"))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("Google"))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("DOTween"))
-//                    return false;
-
-//                if (assembly.FullName.StartsWith("Newtonsoft"))
-//                    return false;
-
-//                return true;
-//            }
-//        }
-//    }
-//}
+            var allTypes = assemblies.SelectMany((x) => x.GetTypes()).ToArray();
+            return allTypes.Where((x) => x != null && x != type && type.IsAssignableFromGeneric(x));
+        }
+    }
+}
