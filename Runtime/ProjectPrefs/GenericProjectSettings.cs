@@ -65,6 +65,7 @@ namespace UniKit
 
             List<Object> preloaded = new List<Object>(PlayerSettings.GetPreloadedAssets());
             preloaded.Add(settings);
+            preloaded.RemoveAll((x) => x == null);
             PlayerSettings.SetPreloadedAssets(preloaded.ToArray());
             return settings;
         }
