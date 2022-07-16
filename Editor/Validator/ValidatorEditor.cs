@@ -17,7 +17,7 @@ namespace UniKit.Editor.QA
             void AutomatedSceneValidityCheck(Scene scene, LoadSceneMode loadSceneMode) => SceneValidator.ValidateScene(scene, false);
         }
 
-        [MenuItem("Tools/Validator/Output Last Log")]
+        [MenuItem("UniKit/Validator/Output Last Log")]
         public static void OutputLastLog()
             => SceneValidator.OutputLastLog();
 
@@ -45,7 +45,7 @@ namespace UniKit.Editor.QA
             => command.context is IValidateable
             || command.context.GetType().GetCustomAttribute<NullReferenceValidate>() != null;
 
-        [MenuItem("Tools/Validator/Validate Current Scene")]
+        [MenuItem("UniKit/Validator/Validate Current Scene")]
         public static Result ValidateCurrentScene()
             => SceneValidator.ValidateCurrentScene(true);
     }

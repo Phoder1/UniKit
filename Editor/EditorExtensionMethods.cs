@@ -157,50 +157,5 @@ namespace UniKit.Editor
             => assembly.HasReferenceTo(referencedAssembly.FullName);
         public static bool HasReferenceTo(this UnityEditor.Compilation.Assembly assembly, string referencedAssembly)
             => Array.Exists(assembly.assemblyReferences, (x) => referencedAssembly.StartsWith(x.name));
-        public static IEnumerable<Type> GetAllThatImplement(this Type type)
-            => type.GetAllSystemAssembliesThatMightImplement()
-            .SelectMany((x) => x.GetTypes())
-            .Where((x) => x != null && x != type && type.IsAssignableFromGeneric(x));
-        public static IEnumerable<System.Reflection.Assembly> GetAllSystemAssembliesThatMightImplement(this Type type)
-            => type.GetAllUnityAssembliesThatMightImplement().GetSystemAssemblies();
-        public static List<UnityEditor.Compilation.Assembly> GetAllUnityAssembliesThatMightImplement(this Type type)
-        {
-            var assembly = type.Assembly;
-            var allAssemblies = CompilationPipeline.GetAssemblies(AssembliesType.Player);
-            var assemblies = allAssemblies.Where(IsValid);
-            return assemblies;
-
-            bool IsValid(UnityEditor.Compilation.Assembly x)
-            {
-                if (x.name.StartsWith("Assembly-CSharp-firstpass"))
-                    return false;
-
-                if (!assembly.FullName.StartsWith(x.name) && !x.HasReferenceTo(assembly))
-                    return false;
-
-                return true;
-            }
-        }
-        public static IEnumerable<System.Reflection.Assembly> GetSystemAssemblies(this IEnumerable<UnityEditor.Compilation.Assembly> assemblies)
-        {
-            var allSystemAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (var assembly in allSystemAssemblies)
-                if (assemblies.Any((x) => assembly.FullName.StartsWith(x.name)))
-                    yield return assembly;
-        }
-
-        public static Type GetCustomEditor(this Object objectRef)
-        {
-            var assembly = System.Reflection.Assembly.GetAssembly(typeof(Editor));
-            var editorAttributes = assembly.CreateInstance("UnityEditor.CustomEditorAttributes");
-
-            var type = editorAttributes.GetType();
-            BindingFlags bf = BindingFlags.Static | BindingFlags.NonPublic;
-
-            MethodInfo findCustomEditorType = type.GetMethod("FindCustomEditorType", bf);
-            return (Type)findCustomEditorType.Invoke(editorAttributes, new object[] { objectRef, true });
-
-        }
     }
 }

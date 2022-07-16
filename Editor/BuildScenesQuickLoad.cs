@@ -12,14 +12,14 @@ public class BuildScenesQuickLoad : EditorWindow
             EnableQuickLoad();
     }
 
-    [MenuItem("Tools/Build Scenes Quickload/Enable")]
+    [MenuItem("UniKit/Build Scenes Quickload/Enable")]
     public static void EnableQuickLoad()
     {
         EditorPrefs.SetBool(EnabledPrefKey, true);
         SceneView.duringSceneGui += OnScene;
     }
 
-    [MenuItem("Tools/Build Scenes Quickload/Disable")]
+    [MenuItem("UniKit/Build Scenes Quickload/Disable")]
     public static void DisableQuickLoad()
     {
         EditorPrefs.SetBool(EnabledPrefKey, false);
