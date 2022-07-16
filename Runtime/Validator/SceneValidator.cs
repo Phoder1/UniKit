@@ -38,7 +38,7 @@ namespace UniKit.QA
             => ValidateScene(SceneManager.GetActiveScene(), OutputLogs);
         public static Result ValidateScene(Scene scene, bool OutputLogs = true)
         {
-            Result _isValid = true;
+            Result isValid = true;
             if (_reports == null)
                 _reports = new List<InvalidLogReport>();
             else
@@ -67,14 +67,14 @@ namespace UniKit.QA
                     Log(valid.ErrorMessage, reflectionValidateable);
             }
 
-            if (OutputLogs)
+            if (OutputLogs || !isValid)
                 OutputLastLog();
 
-            return _isValid;
+            return isValid;
 
             void Log(string msg, Component context = null)
             {
-                _isValid = Result.Failed(string.Join("\n", _isValid.ErrorMessage, msg));
+                isValid = Result.Failed(string.Join("\n", isValid.ErrorMessage, msg));
                 _reports.Add(new InvalidLogReport(context, msg.Split("\n")));
             }
         }

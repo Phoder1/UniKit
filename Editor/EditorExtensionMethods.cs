@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UniKit.Reflection;
 using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEngine;
-using Object = UnityEngine.Object;
-using UniKit.Reflection;
+
 
 namespace UniKit.Editor
 {
+    using Editor = UnityEditor.Editor;
+    using Object = UnityEngine.Object;
     public static class EditorExtensionMethods
     {
         public static void FlatProperty(this SerializedProperty property, GUIContent guiContent = null)
@@ -170,7 +172,7 @@ namespace UniKit.Editor
 
             bool IsValid(UnityEditor.Compilation.Assembly x)
             {
-                if (x.name.StartsWith("Assembly-CSharp-firstpass")) 
+                if (x.name.StartsWith("Assembly-CSharp-firstpass"))
                     return false;
 
                 if (!assembly.FullName.StartsWith(x.name) && !x.HasReferenceTo(assembly))
@@ -190,7 +192,7 @@ namespace UniKit.Editor
 
         public static Type GetCustomEditor(this Object objectRef)
         {
-            var assembly = System.Reflection.Assembly.GetAssembly(typeof(UnityEditor.Editor));
+            var assembly = System.Reflection.Assembly.GetAssembly(typeof(Editor));
             var editorAttributes = assembly.CreateInstance("UnityEditor.CustomEditorAttributes");
 
             var type = editorAttributes.GetType();

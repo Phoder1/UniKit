@@ -14,10 +14,10 @@ namespace UniKit.Editor.QA
         {
             SceneManager.sceneLoaded += AutomatedSceneValidityCheck;
 
-            void AutomatedSceneValidityCheck(Scene scene, LoadSceneMode loadSceneMode) => SceneValidator.ValidateScene(scene);
+            void AutomatedSceneValidityCheck(Scene scene, LoadSceneMode loadSceneMode) => SceneValidator.ValidateScene(scene, false);
         }
 
-        [MenuItem("Phoder1/Validate Scene/Output Last Log")]
+        [MenuItem("Tools/Validator/Output Last Log")]
         public static void OutputLastLog()
             => SceneValidator.OutputLastLog();
 
@@ -45,7 +45,7 @@ namespace UniKit.Editor.QA
             => command.context is IValidateable
             || command.context.GetType().GetCustomAttribute<NullReferenceValidate>() != null;
 
-        [MenuItem("Phoder1/Validate Scene/Validate Current Scene")]
+        [MenuItem("Tools/Validator/Validate Current Scene")]
         public static Result ValidateCurrentScene()
             => SceneValidator.ValidateCurrentScene(true);
     }

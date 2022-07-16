@@ -1,12 +1,12 @@
 {
   "name": "com.phoder1.unikit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "displayName": "UniKit",
   "description": "Collection of C# and Unity utillities packed as a unity package. Aimed to be simple to use.",
   "unity": "2021.3",
   "unityRelease": "5f1",
   "dependencies": {
-	  "com.unity.nuget.newtonsoft-json": "3.0.2"
+    "com.unity.nuget.newtonsoft-json": "3.0.2"
   },
   "keywords": [
     "utillities",
@@ -17,5 +17,6 @@
     "name": "Alon Talmi",
     "email": "alontalmi@protonmail.com",
     "url": "https://github.com/Phoder1"
-  }
+  },
+  "type": "library"
 }
