@@ -12,23 +12,23 @@ using Object = UnityEngine.Object;
 
 namespace UniKit.Editor
 {
-    public class GenericProjectSettingsProvider : MonoBehaviour
+    public static class GenericProjectSettingsProvider
     {
-        
+
         internal static IReadOnlyList<Type> settingsTypes = typeof(GenericProjectSettings<>).GetAllThatImplement().ToArray();
         internal static BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         [SettingsProviderGroup]
         internal static SettingsProvider[] FetchGenericSettingsProviderList()
         {
-            List<SettingsProvider> providers = new List<SettingsProvider>();
+            List<SettingsProvider> providers = new List<SettingsProvider>(); 
 
             foreach (Type settingsType in settingsTypes)
             {
                 if (!settingsType.TryFindProperty("Data", bindingFlags, out var property))
                     continue;
 
-                var editor = LoadEditor(out var value); 
+                var editor = LoadEditor(out var value);
                 if (editor == null || editor.target == null)
                     continue;
 
@@ -53,7 +53,7 @@ namespace UniKit.Editor
                             return;
                     }
                     //Todo: support custom inspectors
-                    editor.DrawDefaultInspector();
+                    editor.OnInspectorGUI();
                 }
 
                 UnityEditor.Editor LoadEditor(out Object value)
@@ -62,8 +62,10 @@ namespace UniKit.Editor
                     if (value == null)
                         return null;
 
-                    var customEditor = value.GetCustomEditor();
-                    return UnityEditor.Editor.CreateEditor(value, customEditor);
+                    var customEditorType = value.GetType().GetCustomEditorTypes()?.FirstOrDefault();
+
+
+                    return UnityEditor.Editor.CreateEditor(value, customEditorType);
                 }
             }
 

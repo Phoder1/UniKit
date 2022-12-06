@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -277,6 +278,12 @@ namespace UniKit.Reflection
             }
 
             return true;
+        }
+
+        public static Dictionary<Type, T> WithAttribute<T>(this IEnumerable<Type> types)
+            where T : Attribute
+        {
+            return new Dictionary<Type, T>(types.Select(t => new KeyValuePair<Type, T>(t, t.GetCustomAttribute<T>())).Where(p => p.Value != null));
         }
     }
 }

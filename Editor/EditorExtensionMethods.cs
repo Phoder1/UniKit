@@ -34,7 +34,6 @@ namespace UniKit.Editor
             if (childCount == 0)
                 EditorGUILayout.PropertyField(property);
         }
-
         public static IEnumerable<SerializedProperty> GetChilds(this SerializedProperty property)
         {
             property = property.Copy();
@@ -77,7 +76,12 @@ namespace UniKit.Editor
             object myDataClass = drawer.fieldInfo.GetValue(property.serializedObject.targetObject);
             return myDataClass;
         }
-
+        public static Type GetInspectedType(this CustomEditor editor)
+        {
+            if(editor.TryGetFieldValue("m_InspectedType", out Type type))
+                return type;
+            return null;
+        }
         public static FieldInfo GetField(this SerializedProperty property)
         {
             BindingFlags bindings = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;

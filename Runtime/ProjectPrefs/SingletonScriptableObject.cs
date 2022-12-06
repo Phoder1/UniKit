@@ -14,8 +14,6 @@ namespace UniKit
         private static string ResourcePath => typeof(TChild).Name;
         private static string AssetPath
             => Path.ChangeExtension(Path.Combine("Assets/Resources", ResourcePath), "asset");
-        public virtual string MenuPath
-            => $"{Application.productName.ToDisplayName()}/{typeof(TChild).Name.ToDisplayName()}";
 
         private static TChild data;
         public static TChild Data
