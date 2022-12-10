@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -49,6 +50,10 @@ public class BuildScenesQuickLoad : EditorWindow
         var def = GUI.backgroundColor;
 
         var sp = scenePath.Split('/', '\\', '.');
+
+        if (!sp?.Any(p => !string.IsNullOrEmpty(p)) ?? false || sp.Length < 2)
+            return;
+
         var name = sp[sp.Length - 2];
 
         if (active.name == name)
